@@ -1,0 +1,25 @@
+@use './variables' as *;
+
+.MuiPaper-root {
+  &.MuiPaper-elevation {
+    background-color: $md-accent;
+  }
+}
+
+#multiple-filter {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  line-height: 32px;
+}
+
+#multiple-filter-label {
+  &.Mui-focused {
+    color: $md-primary;
+  }
+}
+
+.Mui-focused {
+  .MuiOutlinedInput-notchedOutline {
+    border-color: $md-primary !important;
+  }
+}

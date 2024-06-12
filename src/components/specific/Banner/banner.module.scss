@@ -1,0 +1,13 @@
+@use '/src/assets/styles/variables.scss' as *;
+
+.banner-overlay {
+  background: linear-gradient(
+    to bottom,
+    rgba($md-background, 0.6),
+    rgba($md-background, 1)
+  );
+}
+
+.swiper-bg {
+  object-position: 0px 30%;
+}

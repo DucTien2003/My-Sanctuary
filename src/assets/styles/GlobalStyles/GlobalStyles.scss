@@ -1,0 +1,186 @@
+@use '../variables.scss' as *;
+@use '../customMaterialUI.scss' as *;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  font-family: 'Roboto', 'Poppins', sans-serif;
+  color: $text-color;
+  font-size: 1rem;
+  line-height: 1.3;
+  text-rendering: optimizeSpeed;
+}
+
+// scrollBar css
+html {
+  *::-webkit-scrollbar {
+    border-radius: 0;
+    width: 8px;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: $md-scrollbar-thumb;
+  }
+
+  *::-webkit-scrollbar-track {
+    border-radius: 0;
+    background-color: rgba(0, 0, 0, 0);
+  }
+}
+
+a {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+
+  &:hover {
+    color: currentColor;
+  }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  display: block;
+}
+
+ul,
+li {
+  display: block;
+  list-style: none;
+
+  &,
+  p {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+img {
+  display: inline-block;
+  max-width: 100%;
+}
+
+button {
+  border: none;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+input {
+  border: none;
+  outline: none;
+}
+
+h1 {
+  font-size: 2rem !important;
+}
+
+h2 {
+  font-size: 1.75rem !important;
+}
+
+h3 {
+  font-size: 1.5rem !important;
+}
+
+h4 {
+  font-size: 1.25rem !important;
+}
+
+h5 {
+  font-size: 1rem !important;
+}
+
+h6 {
+  font-size: 0.875rem !important;
+}
+
+@each $name, $color in $colors {
+  .#{$name}-color {
+    color: $color;
+  }
+
+  .#{$name}-color-hover {
+    &:hover {
+      color: $color;
+    }
+  }
+
+  .#{$name}-bg {
+    background-color: $color;
+  }
+
+  .\!#{$name}-color {
+    color: $color !important;
+  }
+
+  .\!#{$name}-bg {
+    background-color: $color !important;
+  }
+
+  .#{$name}-border-b {
+    border-bottom: 1px solid $color;
+  }
+
+  .#{$name}-border-t {
+    border-top: 1px solid $color;
+  }
+
+  .#{$name}-border {
+    border: 1px solid $color;
+  }
+
+  .hover-#{$name}-bg {
+    &:hover {
+      background-color: $color;
+    }
+  }
+}
+
+@for $i from 1 through 10 {
+  .limited-line-#{$i} {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: #{$i}; /* number of lines to show */
+    -webkit-box-orient: vertical;
+  }
+}
+
+.font-roboto {
+  font-family: 'Roboto', sans-serif;
+}
+
+.font-poppins {
+  font-family: 'Poppins', sans-serif;
+}
+
+.font-league-spartan {
+  font-family: 'League Spartan', 'Roboto', 'Poppins', sans-serif;
+}
+
+.container {
+  max-width: 1440px !important;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.text-mini {
+  font-size: 10px;
+}
