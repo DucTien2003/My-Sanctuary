@@ -2244,3 +2244,4 @@ export const fakeData = {
     },
   ],
 };
+// .\minio.exe server C:\Users\HP\Documents\Workspace\BrightFuture\BF-MySanctuary\tool\minIO\storage --console-address :9001

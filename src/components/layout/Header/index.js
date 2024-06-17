@@ -4,17 +4,18 @@ import { Link } from 'react-router-dom';
 
 import SearchInput from './SearchInput';
 import styles from './header.module.scss';
+import { useWindowScroll } from '@/hooks';
 import { MenuIcon, FaRegUserCircle } from '@/utils/icon';
-import { useSideBarStore, sideBarActions, useDeviceStore } from '@/store';
+import { useSideBarStore, sideBarActions } from '@/store';
 
 function Header({ isAbsolute = false }) {
   const [sideBarState, sideBarDispatch] = useSideBarStore();
-  const [deviceState] = useDeviceStore();
+  const isTop = useWindowScroll();
 
   return (
     <div
       className={clsx(
-        { 'md-primary-border-b !bg-white': !deviceState.isTop },
+        { 'md-primary-border-b !bg-white': !isTop },
         { absolute: isAbsolute, fixed: !isAbsolute },
         styles['header'],
         'left-0 right-0 top-0 z-50'

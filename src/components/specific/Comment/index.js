@@ -10,7 +10,7 @@ function Comment({ comment }) {
   const [likes, setLikes] = useState(comment.likes);
   const [dislikes, setDislikes] = useState(comment.dislikes);
 
-  console.log('Comment.js');
+  // console.log('Comment.js');
 
   const handleLike = (commentId) => {
     setIsLike(!isLike);

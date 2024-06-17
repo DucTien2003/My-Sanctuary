@@ -1,13 +1,13 @@
 import Drawer from './drawers/Drawer';
 import PersistentDrawer from './drawers/PersistentDrawer';
-import { useDeviceStore } from '@/store';
+import { useWindowResize } from '@/hooks';
 
 function SideBar({ children }) {
-  const [deviceState] = useDeviceStore();
+  const isMobile = useWindowResize();
 
   return (
     <div>
-      {deviceState.isMobile ? (
+      {isMobile ? (
         <div>
           <Drawer />
           {children}

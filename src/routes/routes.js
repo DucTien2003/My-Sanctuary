@@ -11,9 +11,13 @@ import { AuthLayout } from '@/layouts';
 
 const publicRoutes = [
   { path: '/', component: Home },
-  { path: '/comic', component: Comic },
+  { path: '/:nameComic/:idComic', component: Comic },
   { path: '/comic-list', component: ComicList },
-  { path: '/chapter', component: Chapter, headerAbsolute: true },
+  {
+    path: '/:nameComic/:nameChapter/:idChapter',
+    component: Chapter,
+    headerAbsolute: true,
+  },
 
   // Auth
   { path: '/login', component: Login, layout: AuthLayout },

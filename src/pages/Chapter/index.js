@@ -1,8 +1,23 @@
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 import ChapterSelector from '@/components/specific/ChapterSelector';
+import { useGetData } from '@/hooks';
 
 function Chapter() {
+  const { idChapter } = useParams();
+
+  const apiUrl = `http://localhost:8081/api/chapter/${idChapter}`;
+
+  const { error, loading, responseData } = useGetData(apiUrl);
+
+  if (loading) {
+    return <h1 className="mt-16 w-full text-center">Loading...</h1>;
+  }
+
+  if (error) {
+    return <h2 className="mt-16 w-full text-center">Error: {error.message}</h2>;
+  }
+
   return (
     <div>
       {/* Header */}
@@ -24,7 +39,10 @@ function Chapter() {
             Previous chapter
           </Link>
           <div className="mx-3 flex-1">
-            <ChapterSelector initialChapter={3} />
+            <ChapterSelector
+              listChapters={responseData.listChapters}
+              initialChapter={responseData.chapterInfo.index}
+            />
           </div>
           <Link
             to="/chapter"
@@ -36,20 +54,13 @@ function Chapter() {
 
       {/* Content */}
       <div className="mx-auto w-[1000px]">
-        <div>
-          <img
-            src={require('../../assets/images/Darwins Game Chap 125 page 56.jpg')}
-            alt="img"
-            className="object-cover"
-          />
-        </div>
-        <div>
-          <img
-            src={require('../../assets/images/Darwins Game Chap 125 page 57.jpg')}
-            alt="img"
-            className="object-cover"
-          />
-        </div>
+        {responseData.listImages.map((image, index) => {
+          return (
+            <div key={index}>
+              <img src={image} alt="img" className="w-full object-cover" />
+            </div>
+          );
+        })}
       </div>
     </div>
   );

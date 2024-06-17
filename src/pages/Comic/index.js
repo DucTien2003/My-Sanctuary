@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import { Link, useParams } from 'react-router-dom';
 
 import BookMarkBtn from './BookmarkBtn';
 import styles from './comic.module.scss';
@@ -6,6 +7,8 @@ import Cover from '@/components/common/Cover';
 import Rating from '@/components/specific/Rating';
 import Swiper from '@/components/specific/Swiper';
 import Comment from '@/components/specific/Comment';
+import { useGetData } from '@/hooks';
+import { formatPath } from '@/utils';
 import { latestUpdates } from '@/api/home';
 import {
   FaRegStar,
@@ -13,7 +16,6 @@ import {
   FaRegComment,
   MdOutlineRemoveRedEye,
 } from '@/utils';
-import { Link } from 'react-router-dom';
 
 const comic = {
   id: 1,
@@ -91,6 +93,20 @@ const comic = {
 };
 
 function Comic() {
+  const { nameComic, idComic } = useParams();
+
+  const apiUrl = `http://localhost:8081/api/comic/${idComic}`;
+
+  const { error, loading, responseData } = useGetData(apiUrl);
+
+  if (loading) {
+    return <h1 className="mt-16 w-full text-center">Loading...</h1>;
+  }
+
+  if (error) {
+    return <h2 className="mt-16 w-full text-center">Error: {error}</h2>;
+  }
+
   return (
     <div className="relative mb-10">
       {/* Banner */}
@@ -242,13 +258,13 @@ function Comic() {
               <div
                 className={clsx(
                   styles['body-box'],
-                  'md-primary-border border-opacity-10'
+                  'md-primary-border max-h-[500px] overflow-y-auto border-opacity-10'
                 )}>
-                {comic.chapters.map((chapter, index) => {
+                {responseData.map((chapter, index) => {
                   return (
                     <Link
                       key={index}
-                      to="/chapter"
+                      to={`/${formatPath(nameComic)}/${formatPath(chapter.name)}/${chapter.id}`}
                       className={clsx(
                         styles['item-chapter'],
                         styles['item-box'],
@@ -261,16 +277,14 @@ function Comic() {
                         <div className="flex">
                           <span className="ml-3 flex items-center">
                             <FaRegComment className="mr-1" />
-                            {chapter.comments}
+                            999
                           </span>
                           <span className="ml-3 flex items-center">
                             <MdOutlineRemoveRedEye className="mr-1" />
-                            {chapter.views}
+                            999
                           </span>
                         </div>
-                        <span className="mt-1 w-full text-end">
-                          {chapter.date}
-                        </span>
+                        <span className="mt-1 w-full text-end">3 day ago</span>
                       </div>
                     </Link>
                   );
@@ -280,7 +294,7 @@ function Comic() {
           </div>
 
           {/* Comments */}
-          <div className="ml-8 mt-10 flex-1">
+          <div className="ml-8 mt-10 max-h-full flex-1">
             <h3
               className={clsx(
                 styles['header-box'],
@@ -291,7 +305,7 @@ function Comic() {
             <div
               className={clsx(
                 styles['body-box'],
-                'md-primary-border border-opacity-10'
+                'md-primary-border max-h-full border-opacity-10'
               )}>
               {comic.comments.map((comment, index) => {
                 return (

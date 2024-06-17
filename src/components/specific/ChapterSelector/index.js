@@ -4,21 +4,13 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
+import { Link, useParams } from 'react-router-dom';
 
-const chapterList = [
-  { id: 1, name: 'Chapter 1' },
-  { id: 2, name: 'Chapter 2' },
-  { id: 3, name: 'Chapter 3' },
-  { id: 4, name: 'Chapter 4' },
-  { id: 5, name: 'Chapter 5' },
-  { id: 6, name: 'Chapter 6' },
-  { id: 7, name: 'Chapter 7' },
-  { id: 8, name: 'Chapter 8' },
-  { id: 9, name: 'Chapter 9' },
-  { id: 10, name: 'Chapter 10' },
-];
+import { formatPath } from '@/utils';
 
-export default function ChapterSelector({ initialChapter }) {
+export default function ChapterSelector({ listChapters, initialChapter }) {
+  const { nameComic } = useParams();
+
   const [chapter, setChapter] = React.useState(initialChapter);
 
   const handleChange = (event) => {
@@ -36,9 +28,13 @@ export default function ChapterSelector({ initialChapter }) {
             value={chapter}
             label="Chapter"
             onChange={handleChange}>
-            {chapterList.map((chapter) => (
-              <MenuItem key={chapter.id} value={chapter.id}>
-                {chapter.name}
+            {listChapters.map((chapter, index) => (
+              <MenuItem value={chapter.index} key={index}>
+                <Link
+                  to={`/${formatPath(nameComic)}/${formatPath(chapter.name)}/${chapter.id}`}
+                  className="w-full px-4 py-2">
+                  {chapter.name}
+                </Link>
               </MenuItem>
             ))}
           </Select>

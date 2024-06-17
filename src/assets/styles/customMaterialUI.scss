@@ -23,3 +23,16 @@
     border-color: $md-primary !important;
   }
 }
+
+// Chapter selector
+.MuiList-root.MuiList-padding.MuiMenu-list {
+  .MuiButtonBase-root {
+    padding: 0;
+  }
+}
+
+#chapter-selector {
+  a {
+    padding: 0 !important;
+  }
+}

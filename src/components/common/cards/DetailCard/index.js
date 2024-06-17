@@ -9,7 +9,7 @@ function DetailCard({ comic }) {
   return (
     <div className="w-full overflow-hidden rounded shadow-2xl">
       {/* Cover */}
-      <Link to="/comic" className="relative overflow-hidden rounded">
+      <Link to="/relife/1" className="relative overflow-hidden rounded">
         <Cover comic={comic} />
 
         {/* Cover info */}
