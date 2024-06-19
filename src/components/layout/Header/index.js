@@ -3,9 +3,10 @@ import IconButton from '@mui/material/IconButton';
 import { Link } from 'react-router-dom';
 
 import SearchInput from './SearchInput';
+import UserMenu from './UserMenu';
 import styles from './header.module.scss';
 import { useWindowScroll } from '@/hooks';
-import { MenuIcon, FaRegUserCircle } from '@/utils/icon';
+import { MenuIcon } from '@/utils/icon';
 import { useSideBarStore, sideBarActions } from '@/store';
 
 function Header({ isAbsolute = false }) {
@@ -55,10 +56,9 @@ function Header({ isAbsolute = false }) {
             <div className="flex flex-1 justify-end">
               <SearchInput />
             </div>
-            <FaRegUserCircle
-              className="md-accent-bg ml-4 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full"
-              color="#333"
-            />
+
+            {/* User menu */}
+            <UserMenu />
           </div>
         </div>
       </div>

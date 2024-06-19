@@ -1,5 +1,6 @@
 import clsx from 'clsx';
-import { Link } from 'react-router-dom';
+import axios from 'axios';
+import { Link, useNavigate } from 'react-router-dom';
 import { Fragment, useRef } from 'react';
 
 import styles from './login.module.scss';
@@ -9,14 +10,32 @@ import { required, minLength } from '@/utils';
 function Login() {
   const usernameRef = useRef();
   const passwordRef = useRef();
-  console.log('Login.js');
+  const navigate = useNavigate();
 
-  const handleSubmit = () => {
+  const handleSubmit = async (e) => {
     let isUsernameError = usernameRef.current.checkError();
     let isPasswordError = passwordRef.current.checkError();
 
     if (!isUsernameError && !isPasswordError) {
-      console.log('Sign in');
+      e.preventDefault();
+
+      // Gửi thông tin đăng nhập đến server
+      try {
+        const response = await axios.post('/api/login', {
+          username: usernameRef.current.value,
+          password: passwordRef.current.value,
+        });
+
+        if (response.status === 200) {
+          const data = response.data;
+          localStorage.setItem('token', data.token);
+          navigate('/');
+        } else {
+          alert('Login failed');
+        }
+      } catch (error) {
+        alert('Login failed');
+      }
     }
   };
 
@@ -27,8 +46,7 @@ function Login() {
           Sign in to your account
         </h4>
 
-        {/* <form action="" method="get"> */}
-        <div>
+        <form>
           <div className="mt-1">
             <Input
               label="Username or email"
@@ -60,27 +78,28 @@ function Login() {
                 id="remember-me"
                 className={clsx(styles['remember-me'], 'cursor-pointer')}
               />
-              <label htmlFor="remember-me" className="cursor-pointer  pl-2">
+              <label htmlFor="remember-me" className="mt-1 cursor-pointer pl-2">
                 Remember me
               </label>
             </div>
             <span>
               <Link
                 to="/forgot-password"
-                className="!md-primary-color hover:underline">
+                className="!md-primary-color mt-1 hover:underline">
                 Forgot Password?
               </Link>
             </span>
           </div>
 
           <button
-            // type="submit"
+            type="submit"
             className="md-primary-bg mt-4 w-full rounded-lg py-1 font-semibold"
             onClick={handleSubmit}>
             Sign In
           </button>
-        </div>
+        </form>
       </div>
+
       <div className={clsx(styles['login-footer'], 'mt-6 py-4 text-center')}>
         <span>New user?</span>
         <Link

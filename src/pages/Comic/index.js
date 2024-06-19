@@ -1,15 +1,16 @@
 import clsx from 'clsx';
 import { Link, useParams } from 'react-router-dom';
 
+import Rating from './Rating';
 import BookMarkBtn from './BookmarkBtn';
 import styles from './comic.module.scss';
 import Cover from '@/components/common/Cover';
-import Rating from '@/components/specific/Rating';
 import Swiper from '@/components/specific/Swiper';
 import Comment from '@/components/specific/Comment';
 import { useGetData } from '@/hooks';
 import { formatPath } from '@/utils';
 import { latestUpdates } from '@/api/home';
+import { comicPageApi } from '@/api/pages';
 import {
   FaRegStar,
   FiBookmark,
@@ -95,17 +96,21 @@ const comic = {
 function Comic() {
   const { nameComic, idComic } = useParams();
 
-  const apiUrl = `http://localhost:8081/api/comic/${idComic}`;
-
+  const apiUrl = comicPageApi(idComic);
   const { error, loading, responseData } = useGetData(apiUrl);
 
   if (loading) {
     return <h1 className="mt-16 w-full text-center">Loading...</h1>;
   }
-
   if (error) {
     return <h2 className="mt-16 w-full text-center">Error: {error}</h2>;
   }
+
+  const listChapters = responseData.listChapters;
+  const comicInfo = responseData.comicInfo;
+
+  const firstChapter = listChapters[0];
+  const lastChapter = listChapters[listChapters.length - 1];
 
   return (
     <div className="relative mb-10">
@@ -130,7 +135,7 @@ function Comic() {
       {/* Detail */}
       <div className="container flex flex-col pt-20">
         <div className="flex w-full">
-          <div className="mr-5 w-[200px]">
+          <div className="mr-5 w-[200px] shadow-lg">
             <Cover comic={latestUpdates[0]} />
           </div>
 
@@ -149,12 +154,18 @@ function Comic() {
               <div className="mt-5 flex items-center justify-between">
                 <div className="flex items-center">
                   {/* Read */}
-                  <button className="md-primary-bg h-12 rounded-md px-10">
-                    Start reading
-                  </button>
-                  <button className="md-primary-bg ml-2 h-12 rounded-md px-10">
-                    Latest chapter
-                  </button>
+                  <Link
+                    to={`/${formatPath(nameComic)}/${formatPath(firstChapter.name)}/${firstChapter.id}`}>
+                    <button className="md-primary-bg h-12 rounded-md px-10">
+                      Start reading
+                    </button>
+                  </Link>
+                  <Link
+                    to={`/${formatPath(nameComic)}/${formatPath(lastChapter.name)}/${lastChapter.id}`}>
+                    <button className="md-primary-bg ml-2 h-12 rounded-md px-10">
+                      Latest chapter
+                    </button>
+                  </Link>
                   {/* Rating */}
                   <span className="ml-2">
                     <Rating />
@@ -168,9 +179,9 @@ function Comic() {
                 <span
                   className={clsx(
                     {
-                      'border-green-400': comic.status === 'Ongoing',
-                      'border-red-400': comic.status === 'Dropped',
-                      'border-yellow-400': comic.status === 'Completed',
+                      'border-green-400': comicInfo.status === 'Completed',
+                      'border-red-400': comicInfo.status === 'Dropped',
+                      'border-yellow-400': comicInfo.status === 'Ongoing',
                     },
                     'black-color ml-2 flex h-12 min-w-12 items-center justify-center rounded-md border  px-3 font-medium'
                   )}>
@@ -178,13 +189,13 @@ function Comic() {
                   <span
                     className={clsx(
                       {
-                        'bg-green-400': comic.status === 'Ongoing',
-                        'bg-red-400': comic.status === 'Dropped',
-                        'bg-yellow-400': comic.status === 'Completed',
+                        'bg-green-400': comicInfo.status === 'Completed',
+                        'bg-red-400': comicInfo.status === 'Dropped',
+                        'bg-yellow-400': comicInfo.status === 'Ongoing',
                       },
                       'mr-1 h-2 w-2 rounded-full'
                     )}></span>
-                  <span>{comic.status}</span>
+                  <span>{comicInfo.status}</span>
                 </span>
               </div>
             </div>
@@ -260,7 +271,7 @@ function Comic() {
                   styles['body-box'],
                   'md-primary-border max-h-[500px] overflow-y-auto border-opacity-10'
                 )}>
-                {responseData.map((chapter, index) => {
+                {listChapters.map((chapter, index) => {
                   return (
                     <Link
                       key={index}

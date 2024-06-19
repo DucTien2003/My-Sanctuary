@@ -20,7 +20,7 @@ import {
   FaRedditAlien,
   ChevronLeftIcon,
   ChevronRightIcon,
-  GoBookmark,
+  FiBookmark,
 } from '@/utils';
 
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -35,11 +35,11 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 const list = [
   {
     title: 'Follows',
-    icon: GoBookmark,
+    icon: FiBookmark,
     items: [
-      { id: '1', title: 'Updates', to: '/detail' },
-      { id: '2', title: 'Library', to: '/login' },
-      { id: '3', title: 'MDLists', to: '/register' },
+      { id: '1', title: 'Updates', to: '/' },
+      { id: '2', title: 'Library', to: '/' },
+      { id: '3', title: 'MDLists', to: '/' },
       { id: '4', title: 'MyGroups', to: '/' },
       { id: '5', title: 'Reading History', to: '/' },
     ],

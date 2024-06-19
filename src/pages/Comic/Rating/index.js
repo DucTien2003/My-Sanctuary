@@ -1,7 +1,8 @@
 import clsx from 'clsx';
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 
 import { FaRegStar } from '@/utils';
+import { useDropdown } from '@/hooks';
 
 const rateList = [
   { value: 10, title: 'Masterpiece' },
@@ -17,31 +18,15 @@ const rateList = [
 ];
 
 function Rating() {
-  const ratingRef = useRef(null);
-  const [rateValue, setRateValue] = useState(0);
-  const [isRating, setIsRating] = useState(false);
+  const { isShowDropdown, dropdownRef, setIsShowDropdown } = useDropdown();
 
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (ratingRef.current && !ratingRef.current.contains(event.target)) {
-        setIsRating(false);
-      }
-    }
-    if (isRating) {
-      document.addEventListener('mousedown', handleClickOutside);
-    } else {
-      document.removeEventListener('mousedown', handleClickOutside);
-    }
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [ratingRef, isRating]);
+  const [rateValue, setRateValue] = useState(0);
 
   return (
     <div
-      ref={ratingRef}
+      ref={dropdownRef}
       className="black-color relative flex justify-center font-semibold"
-      onClick={() => setIsRating(!isRating)}>
+      onClick={() => setIsShowDropdown(!isShowDropdown)}>
       <span
         className={clsx(
           {
@@ -56,7 +41,7 @@ function Rating() {
 
       <div
         className={clsx(
-          { flex: isRating, hidden: !isRating },
+          { flex: isShowDropdown, hidden: !isShowDropdown },
           'absolute top-full pt-2'
         )}>
         <div className="flex-col overflow-hidden rounded-md bg-gray-200">

@@ -40,7 +40,7 @@ function ForgotPassword() {
 
           <button
             // type="submit"
-            className="md-primary-bg mt-4 w-full rounded-lg py-1 font-semibold"
+            className="md-primary-bg mt-4 w-full rounded-lg py-2 font-semibold"
             onClick={handleSubmit}>
             Submit
           </button>

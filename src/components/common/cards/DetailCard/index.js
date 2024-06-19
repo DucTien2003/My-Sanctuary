@@ -54,7 +54,7 @@ function DetailCard({ comic }) {
           <Link
             to="/comic"
             className={clsx(
-              'md-primary-color-hover inline-block text-xs font-medium'
+              'hover-md-primary-color inline-block text-xs font-medium'
             )}>
             Last chapter
           </Link>

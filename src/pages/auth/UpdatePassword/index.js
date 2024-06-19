@@ -68,7 +68,7 @@ function ResetPassword() {
 
           <button
             // type="submit"
-            className="md-primary-bg my-5 w-full rounded-lg py-1 font-semibold"
+            className="md-primary-bg my-5 w-full rounded-lg py-2 font-semibold"
             onClick={handleClickSubmit}>
             Confirm
           </button>

@@ -9,10 +9,11 @@ export function useGetData(api) {
   useEffect(() => {
     const getData = async () => {
       try {
+        setLoading(true);
         const response = await axios.get(api);
 
         if (response.status < 200 && response.status >= 300) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          throw new Error(`Error: HTTP error! status: ${response.status}`);
         }
 
         if (response.data.success === false) {

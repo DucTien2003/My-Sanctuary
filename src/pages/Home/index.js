@@ -19,7 +19,7 @@ function Home() {
           <h2>Latest Updates</h2>
           <Link
             to="comic-list"
-            className="md-primary-border md-primary-color-hover rounded-lg px-4 py-2 font-semibold">
+            className="md-primary-border hover-md-primary-color rounded-lg px-4 py-2 font-semibold">
             Read more
           </Link>
         </div>
@@ -41,7 +41,7 @@ function Home() {
           <h2>Staff Picks</h2>
           <Link
             to="/comic-list"
-            className="md-primary-border md-primary-color-hover rounded-lg px-4 py-2 font-semibold">
+            className="md-primary-border hover-md-primary-color rounded-lg px-4 py-2 font-semibold">
             Read more
           </Link>
         </div>
@@ -61,7 +61,7 @@ function Home() {
           <h2>Recently Added</h2>
           <Link
             to="comic-list"
-            className="md-primary-border md-primary-color-hover rounded-lg px-4 py-2 font-semibold">
+            className="md-primary-border hover-md-primary-color rounded-lg px-4 py-2 font-semibold">
             Read more
           </Link>
         </div>

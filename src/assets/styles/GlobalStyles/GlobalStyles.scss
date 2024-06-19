@@ -115,7 +115,7 @@ h6 {
     color: $color;
   }
 
-  .#{$name}-color-hover {
+  .hover-#{$name}-color {
     &:hover {
       color: $color;
     }

@@ -17,6 +17,10 @@ export default function ChapterSelector({ listChapters, initialChapter }) {
     setChapter(event.target.value);
   };
 
+  // React.useEffect(() => {
+  //   setChapter(initialChapter);
+  // }, [initialChapter]);
+
   return (
     <div>
       <Box sx={{ minWidth: 120 }}>

@@ -33,7 +33,7 @@ function ComicList() {
         {/* Direction */}
         <Link
           to="/"
-          className="md-primary-border md-primary-color-hover inline-flex items-center rounded-lg px-4 py-2 font-semibold">
+          className="md-primary-border hover-md-primary-color inline-flex items-center rounded-lg px-4 py-2 font-semibold">
           <FaArrowLeft />
           <h5 className="ml-2">Back to Home</h5>
         </Link>

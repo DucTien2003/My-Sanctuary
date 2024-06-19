@@ -77,7 +77,7 @@ export default function Filter({ genres }) {
               key={name}
               value={name}
               style={getStyles(name, selectedGenres, theme)}>
-              {name}
+              <div className="w-full px-4 py-2">{name}</div>
             </MenuItem>
           ))}
         </Select>
