@@ -5,13 +5,21 @@ import { Link } from 'react-router-dom';
 import SearchInput from './SearchInput';
 import UserMenu from './UserMenu';
 import styles from './header.module.scss';
-import { useWindowScroll } from '@/hooks';
+import { userInfoApi } from '@/api';
 import { MenuIcon } from '@/utils/icon';
+import { useWindowScroll, useGetData } from '@/hooks';
 import { useSideBarStore, sideBarActions } from '@/store';
 
 function Header({ isAbsolute = false }) {
-  const [sideBarState, sideBarDispatch] = useSideBarStore();
+  const apiUrl = userInfoApi();
+  const { loading, responseData } = useGetData(apiUrl);
+
   const isTop = useWindowScroll();
+  const [sideBarState, sideBarDispatch] = useSideBarStore();
+
+  if (loading) {
+    return <h1 className="mt-16 w-full text-center">Loading...</h1>;
+  }
 
   return (
     <div
@@ -58,7 +66,7 @@ function Header({ isAbsolute = false }) {
             </div>
 
             {/* User menu */}
-            <UserMenu />
+            {!loading && <UserMenu userInfo={responseData} />}
           </div>
         </div>
       </div>

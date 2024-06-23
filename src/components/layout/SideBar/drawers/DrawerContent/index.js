@@ -108,7 +108,7 @@ function DrawerContent() {
   return (
     <div className="md-accent-bg">
       <DrawerHeader className="flex w-full !justify-between !pl-4">
-        <div className="flex items-center">
+        <Link to="/" className="flex items-center">
           <img
             src="https://mangadex.org/img/brand/mangadex-logo.svg"
             alt="logo img"
@@ -118,7 +118,7 @@ function DrawerContent() {
             src="https://mangadex.org/img/brand/mangadex-wordmark.svg"
             alt="logo text"
           />
-        </div>
+        </Link>
         <IconButton
           onClick={() => sideBarDispatch(sideBarActions.hiddenSideBar())}>
           {theme.direction === 'ltr' ? (

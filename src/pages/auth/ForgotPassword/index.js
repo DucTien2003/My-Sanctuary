@@ -1,19 +1,37 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Fragment, useRef } from 'react';
 
+import axiosCustom from '@/api/axiosCustom';
 import Input from '@/components/common/Input';
-import { FaAnglesLeft, required, minLength } from '@/utils';
+import { forgotPasswordApi } from '@/api';
+import { FaAnglesLeft, required, requiredEmail } from '@/utils';
 
 function ForgotPassword() {
-  const usernameRef = useRef();
+  const emailRef = useRef();
+  const navigate = useNavigate();
 
-  console.log('ForgotPassword.js');
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const isEmailError = emailRef.current.checkError();
 
-  const handleSubmit = () => {
-    let isUsernameError = usernameRef.current.checkError();
-
-    if (!isUsernameError) {
-      console.log('Submit');
+    if (!isEmailError) {
+      try {
+        await axiosCustom()
+          .post(forgotPasswordApi(), {
+            email: emailRef.current.getValue(),
+          })
+          .then((res) => {
+            if (res.status === 200) {
+              navigate('/reset-password');
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            if (error.response.data.unauthenticated === 'email') {
+              emailRef.current.setError(error.response.data.message);
+            }
+          });
+      } catch (error) {}
     }
   };
 
@@ -24,34 +42,33 @@ function ForgotPassword() {
           Forgot your password?
         </h4>
 
-        {/* <form action="" method="get"> */}
-        <div>
+        <form>
           <div className="mt-1">
             <Input
-              label="Username or email"
-              type="text"
-              placeholder="Enter your account"
-              id="username"
-              name="Username or Email"
-              validator={[required, minLength(6)]}
-              ref={usernameRef}
+              label="Email"
+              type="email"
+              placeholder="Enter your email"
+              id="email"
+              name="Email"
+              validator={[required, requiredEmail]}
+              ref={emailRef}
             />
           </div>
 
           <button
-            // type="submit"
             className="md-primary-bg mt-4 w-full rounded-lg py-2 font-semibold"
             onClick={handleSubmit}>
             Submit
           </button>
-        </div>
+        </form>
       </div>
+
       <div className="flex justify-center py-4">
         <Link
           to="/login"
           className="!md-primary-color flex items-center justify-center hover:underline">
           <FaAnglesLeft />
-          <span className="ml-1">Back to Login</span>
+          <span className="ml-1 mt-1">Back to Login</span>
         </Link>
       </div>
     </Fragment>

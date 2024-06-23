@@ -12,8 +12,6 @@ function ResetPassword() {
     required,
   ]);
 
-  // console.log('ResetPassword.js');
-
   const handleSubmit = () => {
     let isPasswordError = passwordRef.current.checkError();
     let isConfirmPasswordError = confirmPasswordRef.current.checkError();

@@ -1,4 +1,4 @@
-import { SHOW_SIDE_BAR, HIDDEN_SIDE_BAR } from './constants';
+import { SHOW_SIDE_BAR, HIDE_SIDE_BAR } from './constants';
 
 const sideBarInitialState = {
   isShow: false,
@@ -10,7 +10,7 @@ function sideBarReducer(state, action) {
       return {
         isShow: true,
       };
-    case HIDDEN_SIDE_BAR:
+    case HIDE_SIDE_BAR:
       return {
         isShow: false,
       };

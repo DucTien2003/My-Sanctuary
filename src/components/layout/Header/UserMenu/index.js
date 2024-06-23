@@ -1,15 +1,19 @@
 import clsx from 'clsx';
+import { Link } from 'react-router-dom';
+import { useState, Fragment } from 'react';
 
 import { useDropdown } from '@/hooks';
+import { isEmpty } from '@/utils';
 import {
   FiUser,
+  FiLogIn,
   FiLogOut,
   LuHistory,
   FaRegBell,
+  FiUserPlus,
   FiBookmark,
   CiSettings,
 } from '@/utils';
-import { Link } from 'react-router-dom';
 
 const userMenuList = [
   { title: 'My profile', icon: FiUser, to: '/' },
@@ -17,10 +21,16 @@ const userMenuList = [
   { title: 'My History', icon: LuHistory, to: '/' },
   { title: 'My Settings', icon: CiSettings, to: '/' },
   { title: 'Announcements', icon: FaRegBell, to: '/' },
-  { title: 'Sign out', icon: FiLogOut, to: '/login' },
 ];
 
-function UserMenu() {
+function UserMenu({ userInfo }) {
+  const [isLogin, setIsLogin] = useState(!isEmpty(userInfo));
+
+  const handleLogOut = () => {
+    localStorage.removeItem('token');
+    setIsLogin(false);
+  };
+
   const { isShowDropdown, dropdownRef, setIsShowDropdown } = useDropdown();
 
   return (
@@ -30,7 +40,11 @@ function UserMenu() {
       onClick={() => setIsShowDropdown(!isShowDropdown)}>
       <span>
         <img
-          src={require('@/assets/images/user-avatar-1.png')}
+          src={
+            isLogin && userInfo.avatar
+              ? userInfo.avatar
+              : require('@/assets/images/user-avatar-1.png')
+          }
           alt="user avatar"
           className="md-accent-bg ml-4 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full"
         />
@@ -39,21 +53,69 @@ function UserMenu() {
       <div
         className={clsx(
           { flex: isShowDropdown, hidden: !isShowDropdown },
-          'md-accent-bg absolute right-0 top-full rounded px-2 py-3 shadow-lg'
+          'md-accent-bg absolute right-0 top-full min-w-64 flex-col rounded p-2 shadow-lg'
         )}>
-        <div className="flex min-w-60 flex-col">
-          {userMenuList.map((item, index) => {
-            const Icon = item.icon;
-            return (
+        {/* avatar */}
+        <Link
+          to="/"
+          className="hover-md-accent-hover-bg md-primary-border-b cursor-pointer rounded py-2">
+          <div className="text-center">
+            <img
+              src={
+                isLogin && userInfo.avatar
+                  ? userInfo.avatar
+                  : require('@/assets/images/user-avatar-1.png')
+              }
+              alt="avatar"
+              className="mx-auto w-32 rounded-full"
+            />
+            <h3 className="mt-2 font-semibold">
+              {isLogin && userInfo.name ? userInfo.name : 'Guest'}
+            </h3>
+          </div>
+        </Link>
+
+        {/* Options */}
+        <div className="flex flex-col">
+          {isLogin ? (
+            <Fragment>
+              {userMenuList.map((item, index) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={index}
+                    to={item.to}
+                    className="hover-md-accent-hover-bg hover-md-primary-color flex w-full items-center rounded px-4 py-3">
+                    <Icon className="mr-2" />
+                    <span>{item.title}</span>
+                  </Link>
+                );
+              })}
+
               <Link
-                key={index}
-                to={item.to}
-                className="hover-md-accent-hover-bg hover-md-primary-color flex w-full items-center rounded px-4 py-3">
-                <Icon className="mr-2" />
-                <span>{item.title}</span>
+                to="/login"
+                className="hover-md-accent-hover-bg hover-md-primary-color flex w-full items-center rounded px-4 py-3"
+                onClick={handleLogOut}>
+                <FiLogOut className="mr-2" />
+                <span>Sign out</span>
               </Link>
-            );
-          })}
+            </Fragment>
+          ) : (
+            <Fragment>
+              <Link
+                to="/login"
+                className="hover-md-accent-hover-bg hover-md-primary-color flex w-full items-center rounded px-4 py-3">
+                <FiLogIn className="mr-2" />
+                <span>Login</span>
+              </Link>
+              <Link
+                to="/register"
+                className="hover-md-accent-hover-bg hover-md-primary-color flex w-full items-center rounded px-4 py-3">
+                <FiUserPlus className="mr-2" />
+                <span>Register</span>
+              </Link>
+            </Fragment>
+          )}
         </div>
       </div>
     </div>

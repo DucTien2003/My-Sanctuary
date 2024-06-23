@@ -7,10 +7,10 @@ import styles from './comic.module.scss';
 import Cover from '@/components/common/Cover';
 import Swiper from '@/components/specific/Swiper';
 import Comment from '@/components/specific/Comment';
+import { comicPageApi } from '@/api';
 import { useGetData } from '@/hooks';
 import { formatPath } from '@/utils';
 import { latestUpdates } from '@/api/home';
-import { comicPageApi } from '@/api/pages';
 import {
   FaRegStar,
   FiBookmark,

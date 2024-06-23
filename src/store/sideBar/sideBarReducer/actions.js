@@ -1,4 +1,4 @@
-import { SHOW_SIDE_BAR, HIDDEN_SIDE_BAR } from './constants';
+import { SHOW_SIDE_BAR, HIDE_SIDE_BAR } from './constants';
 
 export const showSideBar = () => {
   return {
@@ -8,6 +8,6 @@ export const showSideBar = () => {
 
 export const hiddenSideBar = () => {
   return {
-    type: HIDDEN_SIDE_BAR,
+    type: HIDE_SIDE_BAR,
   };
 };

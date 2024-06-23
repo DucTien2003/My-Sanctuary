@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axiosCustom from '@/api/axiosCustom';
 import { useState, useEffect } from 'react';
 
 export function useGetData(api) {
@@ -10,7 +10,7 @@ export function useGetData(api) {
     const getData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(api);
+        const response = await axiosCustom().get(api);
 
         if (response.status < 200 && response.status >= 300) {
           throw new Error(`Error: HTTP error! status: ${response.status}`);
@@ -20,7 +20,7 @@ export function useGetData(api) {
           throw new Error(`Error: There is something wrong with the data.`);
         }
 
-        setResponseData(response.data.data);
+        setResponseData(response.data);
         setLoading(false);
         setError(null);
       } catch (error) {

@@ -1,41 +1,49 @@
 import clsx from 'clsx';
-import axios from 'axios';
+import axiosCustom from '@/api/axiosCustom';
 import { Link, useNavigate } from 'react-router-dom';
 import { Fragment, useRef } from 'react';
 
 import styles from './login.module.scss';
 import Input from '@/components/common/Input';
+import { loginApi } from '@/api';
 import { required, minLength } from '@/utils';
+import { useAlertStore, alertActions } from '@/store';
 
 function Login() {
   const usernameRef = useRef();
   const passwordRef = useRef();
   const navigate = useNavigate();
 
+  const [, alertDispatch] = useAlertStore();
+
   const handleSubmit = async (e) => {
-    let isUsernameError = usernameRef.current.checkError();
-    let isPasswordError = passwordRef.current.checkError();
+    e.preventDefault();
+    const isUsernameError = usernameRef.current.checkError();
+    const isPasswordError = passwordRef.current.checkError();
 
     if (!isUsernameError && !isPasswordError) {
-      e.preventDefault();
+      await axiosCustom()
+        .post(loginApi(), {
+          username: usernameRef.current.getValue(),
+          password: passwordRef.current.getValue(),
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            localStorage.setItem('token', res.data.token);
+            navigate('/');
 
-      // Gửi thông tin đăng nhập đến server
-      try {
-        const response = await axios.post('/api/login', {
-          username: usernameRef.current.value,
-          password: passwordRef.current.value,
+            alertDispatch(
+              alertActions.showAlert('Login successfully!', 'success')
+            );
+          }
+        })
+        .catch((error) => {
+          if (error.response.data.unauthenticated === 'username') {
+            usernameRef.current.setError(error.response.data.message);
+          } else if (error.response.data.unauthenticated === 'password') {
+            passwordRef.current.setError(error.response.data.message);
+          }
         });
-
-        if (response.status === 200) {
-          const data = response.data;
-          localStorage.setItem('token', data.token);
-          navigate('/');
-        } else {
-          alert('Login failed');
-        }
-      } catch (error) {
-        alert('Login failed');
-      }
     }
   };
 
@@ -54,7 +62,7 @@ function Login() {
               placeholder="Enter your account"
               id="username"
               name="Username or Email"
-              validator={[required, minLength(6)]}
+              validator={[required, minLength(5)]}
               ref={usernameRef}
             />
           </div>
@@ -92,8 +100,7 @@ function Login() {
           </div>
 
           <button
-            type="submit"
-            className="md-primary-bg mt-4 w-full rounded-lg py-1 font-semibold"
+            className="md-primary-bg mt-4 w-full rounded-lg py-2 font-semibold"
             onClick={handleSubmit}>
             Sign In
           </button>

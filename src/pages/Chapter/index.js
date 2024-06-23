@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import ChapterSelector from '@/components/specific/ChapterSelector';
 import { formatPath } from '@/utils';
 import { useGetData } from '@/hooks';
-import { chapterPageApi } from '@/api/pages';
+import { chapterPageApi } from '@/api';
 
 function Chapter() {
   const { idChapter, nameComic } = useParams();

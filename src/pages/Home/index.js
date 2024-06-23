@@ -3,9 +3,22 @@ import { Link } from 'react-router-dom';
 import Banner from '@/components/specific/Banner';
 import DetailCard from '@/components/common/cards/DetailCard';
 import Swiper from '@/components/specific/Swiper';
+// import { homePageApi } from '@/api';
+// import { useGetData } from '@/hooks';
 import { latestUpdates } from '@/api/home';
 
 function Home() {
+  // const apiUrl = homePageApi();
+  // const { error, loading, responseData } = useGetData(apiUrl);
+
+  // if (loading) {
+  // return <div>Loading...</div>;
+  // }
+
+  // if (error) {
+  //   return <div>Error: {error.message}</div>;
+  // }
+
   return (
     <div>
       {/* Banner */}

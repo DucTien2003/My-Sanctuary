@@ -4,6 +4,7 @@ import Chapter from '@/pages/Chapter';
 import Login from '@/pages/auth/Login';
 import ComicList from '@/pages/ComicList';
 import Register from '@/pages/auth/Register';
+import ResetPassword from '@/pages/auth/ResetPassword';
 import UpdatePassword from '@/pages/auth/UpdatePassword';
 import ForgotPassword from '@/pages/auth/ForgotPassword';
 
@@ -22,6 +23,7 @@ const publicRoutes = [
   // Auth
   { path: '/login', component: Login, layout: AuthLayout },
   { path: '/register', component: Register, layout: AuthLayout },
+  { path: '/reset-password', component: ResetPassword, layout: AuthLayout },
   { path: '/update-password', component: UpdatePassword, layout: AuthLayout },
   { path: '/forgot-password', component: ForgotPassword, layout: AuthLayout },
 ];

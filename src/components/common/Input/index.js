@@ -12,8 +12,6 @@ function Input(
   const [errorMessage, setErrorMessage] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  console.log('Input.js');
-
   useImperativeHandle(ref, () => ({
     checkError() {
       for (let i = 0; i < validator.length; i++) {
@@ -30,6 +28,10 @@ function Input(
 
     getValue() {
       return value;
+    },
+
+    setError(error) {
+      setErrorMessage(error);
     },
   }));
 
