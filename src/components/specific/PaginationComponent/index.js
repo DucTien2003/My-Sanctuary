@@ -6,11 +6,12 @@ import './paginationComponent.scss';
 
 function PaginationComponent({
   size = 'large',
-  comicPerPage = 36,
-  comicList,
+  itemPerPage = 36,
+  list,
+  showBoundaryButton = true,
   handlePageChange = () => {},
 }) {
-  const totalPage = Math.ceil(comicList.length / comicPerPage);
+  const totalPage = Math.ceil(list.length / itemPerPage);
 
   return (
     <Stack spacing={2}>
@@ -18,8 +19,8 @@ function PaginationComponent({
         count={totalPage}
         variant="outlined"
         shape="rounded"
-        showFirstButton
-        showLastButton
+        showFirstButton={showBoundaryButton}
+        showLastButton={showBoundaryButton}
         size={size}
         onChange={(event, value) => handlePageChange(event, value)}
       />

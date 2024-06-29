@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import { useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 import Rating from './Rating';
@@ -7,7 +8,7 @@ import styles from './comic.module.scss';
 import Cover from '@/components/common/Cover';
 import Swiper from '@/components/specific/Swiper';
 import Comment from '@/components/specific/Comment';
-import { comicPageApi } from '@/api';
+import { comicInfoApi, comicChaptersApi } from '@/api';
 import { useGetData } from '@/hooks';
 import { formatPath } from '@/utils';
 import { latestUpdates } from '@/api/home';
@@ -94,20 +95,30 @@ const comic = {
 };
 
 function Comic() {
-  const { nameComic, idComic } = useParams();
+  const { comicName, comicId } = useParams();
 
-  const apiUrl = comicPageApi(idComic);
-  const { error, loading, responseData } = useGetData(apiUrl);
+  const comicInfoApiUrl = comicInfoApi(comicId);
+  const comicChaptersApiUrl = comicChaptersApi(comicId);
 
-  if (loading) {
-    return <h1 className="mt-16 w-full text-center">Loading...</h1>;
+  const staticApis = useMemo(
+    () => [comicInfoApiUrl, comicChaptersApiUrl],
+    [comicInfoApiUrl, comicChaptersApiUrl]
+  );
+
+  const staticResponse = useGetData(staticApis);
+
+  if (staticResponse.loading) {
+    return <h2 className="mt-16 w-full text-center">Loading...</h2>;
   }
-  if (error) {
-    return <h2 className="mt-16 w-full text-center">Error: {error}</h2>;
+  if (staticResponse.error) {
+    return (
+      <h2 className="mt-16 w-full text-center">
+        Error: {staticResponse.error}
+      </h2>
+    );
   }
 
-  const listChapters = responseData.listChapters;
-  const comicInfo = responseData.comicInfo;
+  const [comicInfo, listChapters] = staticResponse.initialData;
 
   const firstChapter = listChapters[0];
   const lastChapter = listChapters[listChapters.length - 1];
@@ -155,13 +166,13 @@ function Comic() {
                 <div className="flex items-center">
                   {/* Read */}
                   <Link
-                    to={`/${formatPath(nameComic)}/${formatPath(firstChapter.name)}/${firstChapter.id}`}>
+                    to={`/${formatPath(comicName)}/${comicId}/${formatPath(firstChapter.name)}/${firstChapter.id}`}>
                     <button className="md-primary-bg h-12 rounded-md px-10">
                       Start reading
                     </button>
                   </Link>
                   <Link
-                    to={`/${formatPath(nameComic)}/${formatPath(lastChapter.name)}/${lastChapter.id}`}>
+                    to={`/${formatPath(comicName)}/${comicId}/${formatPath(lastChapter.name)}/${lastChapter.id}`}>
                     <button className="md-primary-bg ml-2 h-12 rounded-md px-10">
                       Latest chapter
                     </button>
@@ -245,7 +256,7 @@ function Comic() {
 
         {/* Description - Chapter - Comment */}
         <div className="flex">
-          <div className="w-4/6">
+          <div className="w-7/12">
             {/* Description */}
             <div className="my-10">
               {comic.descriptions.map((description, index) => {
@@ -275,7 +286,7 @@ function Comic() {
                   return (
                     <Link
                       key={index}
-                      to={`/${formatPath(nameComic)}/${formatPath(chapter.name)}/${chapter.id}`}
+                      to={`/${formatPath(comicName)}/${comicId}/${formatPath(chapter.name)}/${chapter.id}`}
                       className={clsx(
                         styles['item-chapter'],
                         styles['item-box'],
@@ -305,7 +316,7 @@ function Comic() {
           </div>
 
           {/* Comments */}
-          <div className="ml-8 mt-10 max-h-full flex-1">
+          <div className="ml-5 mt-10 max-h-full flex-1">
             <h3
               className={clsx(
                 styles['header-box'],
@@ -313,19 +324,7 @@ function Comic() {
               )}>
               Comments
             </h3>
-            <div
-              className={clsx(
-                styles['body-box'],
-                'md-primary-border max-h-full border-opacity-10'
-              )}>
-              {comic.comments.map((comment, index) => {
-                return (
-                  <div key={index} className={clsx(styles['item-box'])}>
-                    <Comment comment={comment} />
-                  </div>
-                );
-              })}
-            </div>
+            <Comment comicId={comicInfo.id} />
           </div>
         </div>
       </div>

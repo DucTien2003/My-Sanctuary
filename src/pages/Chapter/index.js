@@ -1,25 +1,49 @@
+import { useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 import ChapterSelector from '@/components/specific/ChapterSelector';
 import { formatPath } from '@/utils';
 import { useGetData } from '@/hooks';
-import { chapterPageApi } from '@/api';
+import {
+  comicInfoApi,
+  chapterInfoApi,
+  comicChaptersApi,
+  chapterImagesApi,
+} from '@/api';
 
 function Chapter() {
-  const { idChapter, nameComic } = useParams();
+  const { comicId, chapterId, comicName } = useParams();
 
-  const apiUrl = chapterPageApi(idChapter);
-  const { error, loading, responseData } = useGetData(apiUrl);
+  const comicInfoApiUrl = comicInfoApi(comicId);
+  const chapterInfoApiUrl = chapterInfoApi(chapterId);
+  const comicChaptersApiUrl = comicChaptersApi(comicId);
+  const chapterImagesApiUrl = chapterImagesApi(chapterId);
 
-  if (loading) {
-    return <h1 className="mt-16 w-full text-center">Loading...</h1>;
+  const staticApis = useMemo(
+    () => [comicInfoApiUrl, comicChaptersApiUrl],
+    [comicInfoApiUrl, comicChaptersApiUrl]
+  );
+  const dynamicApis = useMemo(
+    () => [chapterInfoApiUrl, chapterImagesApiUrl],
+    [chapterImagesApiUrl, chapterInfoApiUrl]
+  );
+
+  const staticResponse = useGetData(staticApis);
+  const dynamicResponse = useGetData(dynamicApis);
+
+  if (staticResponse.loading || dynamicResponse.loading) {
+    return <h2 className="mt-16 w-full text-center">Loading...</h2>;
   }
-  if (error) {
-    return <h2 className="mt-16 w-full text-center">{error}</h2>;
+  if (staticResponse.error || dynamicResponse.error) {
+    return (
+      <h2 className="mt-16 w-full text-center">
+        {staticResponse.error || dynamicResponse.error}
+      </h2>
+    );
   }
 
-  const chapterInfo = responseData.chapterInfo;
-  const listChapters = responseData.listChapters;
+  const [comicInfo, listChapters] = staticResponse.initialData;
+  const [chapterInfo, listImages] = dynamicResponse.initialData;
 
   const isFirstChapter = chapterInfo.id === listChapters[0].id;
   const isLastChapter =
@@ -27,10 +51,10 @@ function Chapter() {
 
   const prevChapterUrl = isFirstChapter
     ? '/'
-    : `/${nameComic}/${formatPath(listChapters[chapterInfo.index - 2].name)}/${Number(idChapter) - 1}`;
+    : `/${comicName}/${comicId}/${formatPath(listChapters[chapterInfo.index - 2].name)}/${Number(chapterId) - 1}`;
   const nextChapterUrl = isLastChapter
     ? '/'
-    : `/${nameComic}/${formatPath(listChapters[chapterInfo.index].name)}/${Number(idChapter) + 1}`;
+    : `/${comicName}/${comicId}/${formatPath(listChapters[chapterInfo.index].name)}/${Number(chapterId) + 1}`;
 
   return (
     <div>
@@ -39,12 +63,12 @@ function Chapter() {
         {/* Title */}
         <div className="flex items-center text-xl">
           <Link
-            to={`/${formatPath(responseData.comicInfo.name)}/${responseData.comicInfo.id}`}
+            to={`/${formatPath(comicInfo.name)}/${comicInfo.id}`}
             className="hover-md-primary-color md-primary-color">
-            {responseData.comicInfo.name}
+            {comicInfo.name}
           </Link>
           <span className="mx-1">-</span>
-          <span>{responseData.chapterInfo.name}</span>
+          <span>{chapterInfo.name}</span>
         </div>
 
         {/* Control */}
@@ -62,8 +86,9 @@ function Chapter() {
           )}
           <div className="mx-3 flex-1">
             <ChapterSelector
-              listChapters={responseData.listChapters}
-              initialChapter={responseData.chapterInfo.index}
+              listChapters={listChapters}
+              comicId={comicId}
+              initialChapter={chapterInfo.index}
             />
           </div>
           {isLastChapter ? (
@@ -82,7 +107,7 @@ function Chapter() {
 
       {/* Content */}
       <div className="mx-auto w-[1000px]">
-        {responseData.listImages.map((image, index) => {
+        {listImages.map((image, index) => {
           return (
             <div key={index}>
               <img src={image} alt="img" className="w-full object-cover" />

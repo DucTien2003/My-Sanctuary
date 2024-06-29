@@ -12,10 +12,10 @@ import { AuthLayout } from '@/layouts';
 
 const publicRoutes = [
   { path: '/', component: Home },
-  { path: '/:nameComic/:idComic', component: Comic },
+  { path: '/:comicName/:comicId', component: Comic },
   { path: '/comic-list', component: ComicList },
   {
-    path: '/:nameComic/:nameChapter/:idChapter',
+    path: '/:comicName/:comicId/:chapterName/:chapterId',
     component: Chapter,
     headerAbsolute: true,
   },

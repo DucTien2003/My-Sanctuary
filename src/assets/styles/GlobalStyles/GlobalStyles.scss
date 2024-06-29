@@ -86,6 +86,12 @@ input {
   outline: none;
 }
 
+textarea {
+  resize: none;
+  border: none;
+  outline: none;
+}
+
 h1 {
   font-size: 2rem !important;
 }

@@ -59,8 +59,8 @@ function ComicList() {
         <div className="flex w-full justify-center">
           <PaginationComponent
             size="large"
-            comicPerPage={NUMBER_OF_COMICS_PER_PAGE}
-            comicList={latestUpdates}
+            itemPerPage={NUMBER_OF_COMICS_PER_PAGE}
+            list={latestUpdates}
             handlePageChange={handlePageChange}
           />
         </div>

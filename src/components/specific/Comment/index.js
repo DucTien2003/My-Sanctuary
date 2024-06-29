@@ -1,67 +1,126 @@
 import clsx from 'clsx';
-import { useState } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 
-import { AiOutlineLike, AiOutlineDislike } from '@/utils';
+import CommentItem from './CommentItem';
+import styles from './comment.module.scss';
+import axiosCustom from '@/api/axiosCustom';
+import PaginationComponent from '@/components/specific/PaginationComponent';
+import { isEmpty } from '@/utils';
+import { useGetData } from '@/hooks';
+import { commentApi, authInfoApi, comicCommentsApi } from '@/api';
 
-function Comment({ comment }) {
-  const [isLike, setIsLike] = useState(false);
-  const [isDislike, setIsDislike] = useState(false);
+const NUMBER_OF_COMMENTS_PER_PAGE = 5;
 
-  const [likes, setLikes] = useState(comment.likes);
-  const [dislikes, setDislikes] = useState(comment.dislikes);
+function Comment({ comicId }) {
+  const commentInputRef = useRef(null);
 
-  const handleLike = (commentId) => {
-    setIsLike(!isLike);
-    setLikes(isLike ? likes - 1 : likes + 1);
-    if (isDislike) {
-      setIsDislike(false);
-      setDislikes(dislikes - 1);
-    }
+  const [dataRender, setDataRender] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [listComments, setListComments] = useState([]);
+
+  const authInfoApiUrl = authInfoApi();
+  const comicCommentsApiUrl = comicCommentsApi(comicId);
+
+  const apis = useMemo(
+    () => [authInfoApiUrl, comicCommentsApiUrl],
+    [authInfoApiUrl, comicCommentsApiUrl]
+  );
+
+  const { loading, initialData } = useGetData(apis);
+
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
   };
-  const handleDislike = (commentId) => {
-    setIsDislike(!isDislike);
-    setDislikes(isDislike ? dislikes - 1 : dislikes + 1);
-    if (isLike) {
-      setIsLike(false);
-      setLikes(likes - 1);
+
+  const handleComment = async () => {
+    const commentContent = commentInputRef.current.value;
+    if (commentContent.trim() === '') {
+      return;
     }
+
+    const respond = await axiosCustom().post(commentApi(), {
+      comicId: comicId,
+      content: commentContent,
+    });
+
+    setListComments([respond.data, ...listComments]);
+
+    commentInputRef.current.value = '';
   };
+
+  useEffect(() => {
+    setDataRender(
+      listComments.slice(
+        (currentPage - 1) * NUMBER_OF_COMMENTS_PER_PAGE,
+        currentPage * NUMBER_OF_COMMENTS_PER_PAGE
+      )
+    );
+  }, [currentPage, listComments]);
+
+  useEffect(() => {
+    if (!loading) {
+      setListComments(initialData[1]);
+    }
+  }, [loading, initialData]);
+
+  if (loading) {
+    return;
+  }
+
+  // console.log('initialData', initialData[1]);
+  const authInfo = initialData[0];
+  const isLogin = !isEmpty(authInfo);
 
   return (
-    <div className={clsx('flex flex-col px-4 py-2')}>
-      {/* Name user comment */}
-      <div className="flex items-center justify-between">
-        <span className="font-medium">Name {comment.idUser}</span>
-        <span className="text-sm">Chapter {comment.chapter}</span>
+    <div className="md-primary-border max-h-full border-opacity-10 py-3">
+      <div className={clsx()}>
+        {dataRender.map((comment, index) => {
+          return (
+            <div
+              key={comment.id}
+              className={clsx(styles['item-box'], 'mb-2 px-3 pb-4')}>
+              <CommentItem
+                comment={comment}
+                comicId={comicId}
+                authInfo={authInfo}
+                isLogin={isLogin}
+              />
+            </div>
+          );
+        })}
       </div>
 
-      {/* Content comment */}
-      <p className="my-1">{comment.content}</p>
+      {/* Comment pagination */}
+      <div className="my-4 flex w-full justify-center">
+        <PaginationComponent
+          size="large"
+          itemPerPage={NUMBER_OF_COMMENTS_PER_PAGE}
+          list={listComments}
+          handlePageChange={handlePageChange}
+        />
+      </div>
 
-      {/* Like - Dislike */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center">
-          <span
-            className={clsx(
-              { 'md-primary-color': isLike },
-              'flex cursor-pointer items-center'
-            )}
-            onClick={() => handleLike(comment.id)}>
-            <AiOutlineLike className="mr-1" />
-            <span className="text-sm">{likes}</span>
-          </span>
-          <span
-            className={clsx(
-              { 'md-primary-color': isDislike },
-              'ml-3 flex cursor-pointer items-center'
-            )}
-            onClick={() => handleDislike(comment.id)}>
-            <AiOutlineDislike className="mr-1" />
-            <span className="text-sm">{dislikes}</span>
-          </span>
+      {/* Comment input */}
+      {isLogin && (
+        <div className={clsx('px-2')}>
+          <textarea
+            ref={commentInputRef}
+            rows={3}
+            type="text"
+            placeholder="Write your comment..."
+            className={clsx('w-full rounded-lg bg-slate-100 p-4')}
+          />
+          <div className="w-full text-end">
+            <button
+              className={clsx(
+                'md-primary-bg white-color rounded px-6 py-2 font-medium'
+              )}
+              onClick={handleComment}>
+              Send
+            </button>
+          </div>
         </div>
-        <div className="text-sm">10 minutes ago</div>
-      </div>
+      )}
     </div>
   );
 }

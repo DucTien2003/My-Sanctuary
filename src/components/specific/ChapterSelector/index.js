@@ -8,18 +8,18 @@ import { Link, useParams } from 'react-router-dom';
 
 import { formatPath } from '@/utils';
 
-export default function ChapterSelector({ listChapters, initialChapter }) {
-  const { nameComic } = useParams();
+export default function ChapterSelector({
+  comicId,
+  listChapters,
+  initialChapter,
+}) {
+  const { comicName } = useParams();
 
   const [chapter, setChapter] = React.useState(initialChapter);
 
   const handleChange = (event) => {
     setChapter(event.target.value);
   };
-
-  // React.useEffect(() => {
-  //   setChapter(initialChapter);
-  // }, [initialChapter]);
 
   return (
     <div>
@@ -35,7 +35,7 @@ export default function ChapterSelector({ listChapters, initialChapter }) {
             {listChapters.map((chapter, index) => (
               <MenuItem value={chapter.index} key={index}>
                 <Link
-                  to={`/${formatPath(nameComic)}/${formatPath(chapter.name)}/${chapter.id}`}
+                  to={`/${formatPath(comicName)}/${comicId}/${formatPath(chapter.name)}/${chapter.id}`}
                   className="w-full px-4 py-2">
                   {chapter.name}
                 </Link>
