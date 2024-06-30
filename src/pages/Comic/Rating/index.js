@@ -1,6 +1,8 @@
 import clsx from 'clsx';
 import { useState } from 'react';
 
+import axiosCustom from '@/api/axiosCustom';
+import { comicRatingApi } from '@/api';
 import { FaRegStar } from '@/utils';
 import { useDropdown } from '@/hooks';
 
@@ -17,10 +19,45 @@ const rateList = [
   { value: 1, title: 'Appalling' },
 ];
 
-function Rating() {
+function Rating({ comicId, authRating }) {
   const { isShowDropdown, dropdownRef, setIsShowDropdown } = useDropdown();
 
-  const [rateValue, setRateValue] = useState(0);
+  const isLogin = !!localStorage.getItem('token');
+  const [rateValue, setRateValue] = useState(authRating);
+
+  const handleRating = async (ratingValue) => {
+    if (isLogin) {
+      const comicRatingApiUrl = comicRatingApi(comicId);
+      try {
+        if (rateValue !== 0) {
+          const response = await axiosCustom().put(comicRatingApiUrl, {
+            rating: ratingValue,
+          });
+          setRateValue(ratingValue);
+          console.log(response);
+        } else {
+          const response = await axiosCustom().post(comicRatingApiUrl, {
+            rating: ratingValue,
+          });
+          setRateValue(ratingValue);
+          console.log(response);
+        }
+      } catch (error) {
+        console.log(error.response.data);
+      }
+    }
+  };
+
+  const handleRemoveRating = async () => {
+    const comicRatingApiUrl = comicRatingApi(comicId);
+    try {
+      const response = await axiosCustom().delete(comicRatingApiUrl);
+      setRateValue(0);
+      console.log(response);
+    } catch (error) {
+      console.log(error.response.data);
+    }
+  };
 
   return (
     <div
@@ -49,7 +86,7 @@ function Rating() {
             <div
               key={rate.value}
               className="cursor-pointer rounded-md px-4 py-3 hover:bg-gray-300"
-              onClick={() => setRateValue(rate.value)}>
+              onClick={() => handleRating(rate.value)}>
               <span>({rate.value})</span>
               <span className="ml-1">{rate.title}</span>
             </div>
@@ -57,7 +94,7 @@ function Rating() {
           {!!rateValue && (
             <div
               className="cursor-pointer px-4 py-3 hover:bg-gray-300"
-              onClick={() => setRateValue(0)}>
+              onClick={() => handleRemoveRating()}>
               <span>Remove Rating</span>
             </div>
           )}

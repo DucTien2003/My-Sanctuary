@@ -21,12 +21,12 @@ function Comment({ comicId }) {
   const authInfoApiUrl = authInfoApi();
   const comicCommentsApiUrl = comicCommentsApi(comicId);
 
-  const apis = useMemo(
+  const staticApis = useMemo(
     () => [authInfoApiUrl, comicCommentsApiUrl],
     [authInfoApiUrl, comicCommentsApiUrl]
   );
 
-  const { loading, initialData } = useGetData(apis);
+  const staticResponse = useGetData(staticApis);
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
@@ -58,17 +58,16 @@ function Comment({ comicId }) {
   }, [currentPage, listComments]);
 
   useEffect(() => {
-    if (!loading) {
-      setListComments(initialData[1]);
+    if (!staticResponse.loading) {
+      setListComments(staticResponse.initialData[1]);
     }
-  }, [loading, initialData]);
+  }, [staticResponse.loading, staticResponse.initialData]);
 
-  if (loading) {
+  if (staticResponse.loading) {
     return;
   }
 
-  // console.log('initialData', initialData[1]);
-  const authInfo = initialData[0];
+  const authInfo = staticResponse.initialData[0];
   const isLogin = !isEmpty(authInfo);
 
   return (

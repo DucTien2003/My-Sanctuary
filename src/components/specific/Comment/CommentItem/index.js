@@ -150,7 +150,7 @@ function CommentItem({ comment, comicId, authInfo, isLogin }) {
               <FaRegComment className="mr-1" />
               <span className="text-xs">Reply</span>
             </span>
-            <div className="ml-3 text-xs">{timeAgo(comment.publish_at)}</div>
+            <div className="ml-3 text-xs">{timeAgo(comment.publishAt)}</div>
           </div>
         </div>
 

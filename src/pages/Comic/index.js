@@ -5,13 +5,14 @@ import { Link, useParams } from 'react-router-dom';
 import Rating from './Rating';
 import BookMarkBtn from './BookmarkBtn';
 import styles from './comic.module.scss';
+import axiosCustom from '@/api/axiosCustom';
 import Cover from '@/components/common/Cover';
 import Swiper from '@/components/specific/Swiper';
 import Comment from '@/components/specific/Comment';
-import { comicInfoApi, comicChaptersApi } from '@/api';
 import { useGetData } from '@/hooks';
-import { formatPath } from '@/utils';
 import { latestUpdates } from '@/api/home';
+import { formatPath, timeAgo } from '@/utils';
+import { comicInfoApi, comicChaptersApi, updateChapterViewsApi } from '@/api';
 import {
   FaRegStar,
   FiBookmark,
@@ -104,8 +105,12 @@ function Comic() {
     () => [comicInfoApiUrl, comicChaptersApiUrl],
     [comicInfoApiUrl, comicChaptersApiUrl]
   );
-
   const staticResponse = useGetData(staticApis);
+
+  const handleUpdateChapterViews = async (chapterId) => {
+    const updateChapterViewsApiUrl = updateChapterViewsApi(chapterId);
+    await axiosCustom().put(updateChapterViewsApiUrl);
+  };
 
   if (staticResponse.loading) {
     return <h2 className="mt-16 w-full text-center">Loading...</h2>;
@@ -128,7 +133,7 @@ function Comic() {
       {/* Banner */}
       <div className="absolute left-0 top-0 -z-20 h-[300px] w-full overflow-hidden">
         <img
-          src="https://mangadex.org/covers/0cf1c1c7-2894-4b4d-a3cc-3e1501fb3e36/6f6aa44f-56bd-4c82-b375-a43c4764d7f8.png"
+          src={comicInfo.cover}
           alt="cover"
           className={clsx(
             styles['banner-bg'],
@@ -147,20 +152,22 @@ function Comic() {
       <div className="container flex flex-col pt-20">
         <div className="flex w-full">
           <div className="mr-5 w-[200px] shadow-lg">
-            <Cover comic={latestUpdates[0]} />
+            <Cover comic={comicInfo} />
           </div>
 
           <div className="white-color flex flex-1 flex-col">
             <div className="inline-flex flex-1 flex-col">
               {/* Name */}
-              <h1 className="min-w-fit !text-6xl font-bold">{comic.name}</h1>
+              <h1 className="min-w-fit !text-6xl font-bold">
+                {comicInfo.name}
+              </h1>
               {/* Sub-name */}
-              <span className="mt-3 text-xl">{comic.subName}</span>
+              <span className="mt-3 text-xl">{comicInfo.subName}</span>
             </div>
 
             <div className="flex flex-col">
               {/* Author - Artist */}
-              <span className="font-medium">{comic.author}</span>
+              <span className="font-medium">{comicInfo.author}</span>
               {/* Actions */}
               <div className="mt-5 flex items-center justify-between">
                 <div className="flex items-center">
@@ -179,7 +186,10 @@ function Comic() {
                   </Link>
                   {/* Rating */}
                   <span className="ml-2">
-                    <Rating />
+                    <Rating
+                      comicId={comicId}
+                      authRating={comicInfo.authRating}
+                    />
                   </span>
                   {/* Bookmark */}
                   <div className="ml-2">
@@ -215,10 +225,10 @@ function Comic() {
 
         <div className="ml-[220px] mt-8">
           {/* Translator */}
-          {comic.translator && (
+          {comicInfo.translator && (
             <div className="flex items-center font-medium">
               <span className="mr-1">Translator:</span>
-              <span>{comic.translator}</span>
+              <span>{comicInfo.translator}</span>
             </div>
           )}
 
@@ -226,19 +236,19 @@ function Comic() {
           <div className="mt-2 flex items-center">
             <div className="flex cursor-pointer items-center">
               <FaRegStar className="text-2xl" />
-              <span className="ml-1 mt-1 text-lg">{comic.rating}</span>
+              <span className="ml-1 mt-1 text-lg">{comicInfo.rating}</span>
             </div>
             <div className="ml-5 flex cursor-pointer items-center">
               <FiBookmark className="text-2xl" />
-              <span className="ml-1 mt-1 text-lg">{comic.bookmarks}</span>
+              <span className="ml-1 mt-1 text-lg">{comicInfo.bookmarks}</span>
             </div>
             <div className="ml-5 flex cursor-pointer items-center">
               <FaRegComment className="text-2xl" />
-              <span className="ml-1 mt-1 text-lg">{comic.comments.length}</span>
+              <span className="ml-1 mt-1 text-lg">{comicInfo.comments}</span>
             </div>
             <div className="ml-5 flex cursor-pointer items-center">
               <MdOutlineRemoveRedEye className="text-2xl" />
-              <span className="ml-1 mt-1 text-lg">{comic.views}</span>
+              <span className="ml-1 mt-1 text-lg">{comicInfo.views}</span>
             </div>
           </div>
 
@@ -287,6 +297,9 @@ function Comic() {
                     <Link
                       key={index}
                       to={`/${formatPath(comicName)}/${comicId}/${formatPath(chapter.name)}/${chapter.id}`}
+                      onClick={() => {
+                        handleUpdateChapterViews(chapter.id);
+                      }}
                       className={clsx(
                         styles['item-chapter'],
                         styles['item-box'],
@@ -299,14 +312,16 @@ function Comic() {
                         <div className="flex">
                           <span className="ml-3 flex items-center">
                             <FaRegComment className="mr-1" />
-                            999
+                            {chapter.comments}
                           </span>
                           <span className="ml-3 flex items-center">
                             <MdOutlineRemoveRedEye className="mr-1" />
-                            999
+                            {chapter.views}
                           </span>
                         </div>
-                        <span className="mt-1 w-full text-end">3 day ago</span>
+                        <span className="mt-1 w-full text-end text-sm">
+                          {timeAgo(chapter.updateAt)}
+                        </span>
                       </div>
                     </Link>
                   );

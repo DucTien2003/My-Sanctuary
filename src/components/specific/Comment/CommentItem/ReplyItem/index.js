@@ -104,7 +104,7 @@ function ReplyItem({ reply, isLogin, handleShowReplyInput }) {
               <FaRegComment className="mr-1" />
               <span className="text-xs">Reply</span>
             </span>
-            <div className="ml-3 text-xs">{timeAgo(reply.publish_at)}</div>
+            <div className="ml-3 text-xs">{timeAgo(reply.publishAt)}</div>
           </div>
         </div>
       </div>

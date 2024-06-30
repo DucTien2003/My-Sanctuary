@@ -10,11 +10,14 @@ export const userInfoApi = (userId) => `/user/${userId}`;
 
 // Comic
 export const comicInfoApi = (comicId) => `/comic/${comicId}`;
+export const comicRatingApi = (comicId) => `/comic/rating/${comicId}`;
 
 // Chapter
 export const chapterInfoApi = (chapterId) => `/chapter/${chapterId}`;
 export const chapterImagesApi = (chapterId) =>
   `/chapter/all-images/${chapterId}`;
+export const updateChapterViewsApi = (chapterId) =>
+  `/chapter/update-views/${chapterId}`;
 export const comicChaptersApi = (comicId) =>
   `/chapter/comic-chapters/${comicId}`;
 
