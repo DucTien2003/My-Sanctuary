@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import { jwtDecode } from 'jwt-decode';
 import { useState, useEffect, useRef, useMemo } from 'react';
 
 import CommentItem from './CommentItem';
@@ -7,7 +8,7 @@ import axiosCustom from '@/api/axiosCustom';
 import PaginationComponent from '@/components/specific/PaginationComponent';
 import { isEmpty } from '@/utils';
 import { useGetData } from '@/hooks';
-import { commentApi, authInfoApi, comicCommentsApi } from '@/api';
+import { commentApi, comicCommentsApi } from '@/api';
 
 const NUMBER_OF_COMMENTS_PER_PAGE = 5;
 
@@ -18,12 +19,11 @@ function Comment({ comicId }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [listComments, setListComments] = useState([]);
 
-  const authInfoApiUrl = authInfoApi();
   const comicCommentsApiUrl = comicCommentsApi(comicId);
 
   const staticApis = useMemo(
-    () => [authInfoApiUrl, comicCommentsApiUrl],
-    [authInfoApiUrl, comicCommentsApiUrl]
+    () => [comicCommentsApiUrl],
+    [comicCommentsApiUrl]
   );
 
   const staticResponse = useGetData(staticApis);
@@ -59,7 +59,7 @@ function Comment({ comicId }) {
 
   useEffect(() => {
     if (!staticResponse.loading) {
-      setListComments(staticResponse.initialData[1]);
+      setListComments(staticResponse.initialData[0]);
     }
   }, [staticResponse.loading, staticResponse.initialData]);
 
@@ -67,7 +67,9 @@ function Comment({ comicId }) {
     return;
   }
 
-  const authInfo = staticResponse.initialData[0];
+  const authInfo = localStorage.getItem('token')
+    ? jwtDecode(localStorage.getItem('token'))
+    : {};
   const isLogin = !isEmpty(authInfo);
 
   return (

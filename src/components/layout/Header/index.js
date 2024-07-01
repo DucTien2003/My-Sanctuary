@@ -1,29 +1,22 @@
 import clsx from 'clsx';
+import { jwtDecode } from 'jwt-decode';
 import IconButton from '@mui/material/IconButton';
 import { Link } from 'react-router-dom';
-import { useMemo } from 'react';
 
 import SearchInput from './SearchInput';
 import UserMenu from './UserMenu';
 import styles from './header.module.scss';
-import { authInfoApi } from '@/api';
 import { MenuIcon } from '@/utils/icon';
-import { useWindowScroll, useGetData } from '@/hooks';
+import { useWindowScroll } from '@/hooks';
 import { useSideBarStore, sideBarActions } from '@/store';
 
 function Header({ isAbsolute = false }) {
   const isTop = useWindowScroll();
   const [sideBarState, sideBarDispatch] = useSideBarStore();
 
-  const authInfoApiUrl = authInfoApi();
-
-  const staticApis = useMemo(() => [authInfoApiUrl], [authInfoApiUrl]);
-
-  const { loading, initialData } = useGetData(staticApis);
-
-  if (loading) return;
-
-  const authInfo = initialData[0];
+  const authInfo = localStorage.getItem('token')
+    ? jwtDecode(localStorage.getItem('token'))
+    : {};
 
   return (
     <div
@@ -70,7 +63,7 @@ function Header({ isAbsolute = false }) {
             </div>
 
             {/* User menu */}
-            {!loading && <UserMenu userInfo={authInfo} />}
+            <UserMenu userInfo={authInfo} />
           </div>
         </div>
       </div>
