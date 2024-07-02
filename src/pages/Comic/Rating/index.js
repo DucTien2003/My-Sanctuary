@@ -22,29 +22,24 @@ const rateList = [
 function Rating({ comicId, authRating }) {
   const { isShowDropdown, dropdownRef, setIsShowDropdown } = useDropdown();
 
-  const isLogin = !!localStorage.getItem('token');
   const [rateValue, setRateValue] = useState(authRating);
 
   const handleRating = async (ratingValue) => {
-    if (isLogin) {
-      const comicRatingApiUrl = comicRatingApi(comicId);
-      try {
-        if (rateValue !== 0) {
-          const response = await axiosCustom().put(comicRatingApiUrl, {
-            rating: ratingValue,
-          });
-          setRateValue(ratingValue);
-          console.log(response);
-        } else {
-          const response = await axiosCustom().post(comicRatingApiUrl, {
-            rating: ratingValue,
-          });
-          setRateValue(ratingValue);
-          console.log(response);
-        }
-      } catch (error) {
-        console.log(error.response.data);
+    const comicRatingApiUrl = comicRatingApi(comicId);
+    try {
+      if (rateValue !== 0) {
+        await axiosCustom().put(comicRatingApiUrl, {
+          rating: ratingValue,
+        });
+        setRateValue(ratingValue);
+      } else {
+        await axiosCustom().post(comicRatingApiUrl, {
+          rating: ratingValue,
+        });
+        setRateValue(ratingValue);
       }
+    } catch (error) {
+      console.log(error.response.data);
     }
   };
 
@@ -85,7 +80,10 @@ function Rating({ comicId, authRating }) {
           {rateList.map((rate) => (
             <div
               key={rate.value}
-              className="cursor-pointer rounded-md px-4 py-3 hover:bg-gray-300"
+              className={clsx(
+                { 'md-primary-color': rate.value === rateValue },
+                'cursor-pointer rounded-md px-4 py-3 hover:bg-gray-300'
+              )}
               onClick={() => handleRating(rate.value)}>
               <span>({rate.value})</span>
               <span className="ml-1">{rate.title}</span>

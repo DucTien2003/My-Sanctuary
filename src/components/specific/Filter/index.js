@@ -8,8 +8,6 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Chip from '@mui/material/Chip';
 
-import './filter.scss';
-
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -35,7 +33,7 @@ export default function Filter({ genres }) {
   const [selectedGenres, setSelectedGenres] = React.useState([]);
 
   React.useEffect(() => {
-    console.log(selectedGenres);
+    // console.log(selectedGenres);
   }, [selectedGenres]);
 
   const handleChange = (event) => {

@@ -97,6 +97,12 @@ const comic = {
 
 function Comic() {
   const { comicName, comicId } = useParams();
+  const isLogin = !!localStorage.getItem('token');
+
+  const handleUpdateChapterViews = async (chapterId) => {
+    const updateChapterViewsApiUrl = updateChapterViewsApi(chapterId);
+    await axiosCustom().put(updateChapterViewsApiUrl);
+  };
 
   const comicInfoApiUrl = comicInfoApi(comicId);
   const comicChaptersApiUrl = comicChaptersApi(comicId);
@@ -107,14 +113,10 @@ function Comic() {
   );
   const staticResponse = useGetData(staticApis);
 
-  const handleUpdateChapterViews = async (chapterId) => {
-    const updateChapterViewsApiUrl = updateChapterViewsApi(chapterId);
-    await axiosCustom().put(updateChapterViewsApiUrl);
-  };
-
   if (staticResponse.loading) {
     return <h2 className="mt-16 w-full text-center">Loading...</h2>;
   }
+
   if (staticResponse.error) {
     return (
       <h2 className="mt-16 w-full text-center">
@@ -184,17 +186,21 @@ function Comic() {
                       Latest chapter
                     </button>
                   </Link>
-                  {/* Rating */}
-                  <span className="ml-2">
-                    <Rating
-                      comicId={comicId}
-                      authRating={comicInfo.authRating}
-                    />
-                  </span>
-                  {/* Bookmark */}
-                  <div className="ml-2">
-                    <BookMarkBtn />
-                  </div>
+                  {isLogin && (
+                    <div className="flex items-center">
+                      {/* Rating */}
+                      <div className="ml-2">
+                        <Rating
+                          comicId={comicId}
+                          authRating={comicInfo.authRating}
+                        />
+                      </div>
+                      {/* Bookmark */}
+                      <div className="ml-2">
+                        <BookMarkBtn comicInfo={comicInfo} />
+                      </div>
+                    </div>
+                  )}
                 </div>
                 {/* Status */}
                 <span
@@ -234,7 +240,7 @@ function Comic() {
 
           {/* Info index */}
           <div className="mt-2 flex items-center">
-            <div className="flex cursor-pointer items-center">
+            <div className="md-primary-color flex cursor-pointer items-center">
               <FaRegStar className="text-2xl" />
               <span className="ml-1 mt-1 text-lg">{comicInfo.rating}</span>
             </div>
@@ -254,7 +260,7 @@ function Comic() {
 
           {/* Genres */}
           <div className="mt-2 flex flex-wrap">
-            {comic.genres.map((genre, index) => (
+            {comicInfo.genres.map((genre, index) => (
               <span
                 key={index}
                 className="md-primary-border md-primary-color mr-2 mt-2 cursor-pointer rounded-md px-3 py-1">
