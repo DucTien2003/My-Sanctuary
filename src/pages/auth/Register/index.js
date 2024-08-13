@@ -4,6 +4,7 @@ import { useRef, useState, useEffect } from 'react';
 import Input from '@/components/common/Input';
 import axiosCustom from '@/api/axiosCustom';
 
+import { loginUrl } from '@/routes';
 import { registerApi } from '@/api';
 import { useAlertStore, alertActions } from '@/store';
 import { required, minLength, confirmPassword, requiredEmail } from '@/utils';
@@ -126,7 +127,7 @@ function Register() {
         </div>
 
         <button
-          className="md-primary-bg mt-4 w-full rounded-lg py-2 font-semibold"
+          className="theme-primary-bg mt-4 w-full rounded-lg py-2 font-semibold"
           onClick={handleClickRegister}>
           Register
         </button>
@@ -134,8 +135,8 @@ function Register() {
         <div className="my-4 text-center">
           <span>Already have an account?</span>
           <Link
-            to="/login"
-            className="!md-primary-color ml-2 inline-block hover:underline">
+            to={loginUrl()}
+            className="!theme-primary-text ml-2 inline-block hover:underline">
             Sign in
           </Link>
         </div>

@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 import Rating from './Rating';
+import { chapterUrl } from '@/routes';
 import BookMarkBtn from './BookmarkBtn';
 import styles from './comic.module.scss';
 import axiosCustom from '@/api/axiosCustom';
@@ -11,7 +12,7 @@ import Swiper from '@/components/specific/Swiper';
 import Comment from '@/components/specific/Comment';
 import { useGetData } from '@/hooks';
 import { latestUpdates } from '@/api/home';
-import { formatPath, timeAgo } from '@/utils';
+import { breakLine, timeAgo } from '@/utils';
 import { comicInfoApi, comicChaptersApi, updateChapterViewsApi } from '@/api';
 import {
   FaRegStar,
@@ -19,81 +20,6 @@ import {
   FaRegComment,
   MdOutlineRemoveRedEye,
 } from '@/utils';
-
-const comic = {
-  id: 1,
-  name: 'Okamigun × Heisotsu',
-  subName: 'Female Commander × Soldier',
-  author: 'Itsuki Keiichi',
-  status: 'Ongoing',
-  rating: 9.5,
-  bookmarks: 99,
-  views: 9999,
-  translator: 'MangaDex',
-  genres: ['Action', 'Adventure', 'Comedy', 'Drama', 'Fantasy', 'Romance'],
-  descriptions: [
-    'At age 13, the genius wizard Rin embarked on a journey with Lista and the hero party to defeat the great evil known as “the Abyss,” which sought to plunge the world into chaos. But as the battle grew more intense, Rin’s body succumbed to the dark poison of the Abyss, putting his life in grave danger.',
-    'With the words “I’ll come back,” Rin’s soul entered a forced dormancy, only to reawaken 300 years later as a noble boy. Starting his second life in a peaceful world, Rin discovers that on one side of the world, the destined forces of darkness are beginning to stir once more.',
-  ],
-  comments: [
-    {
-      id: 1,
-      idUser: 2,
-      content: 'This is a great comic!',
-      likes: 10,
-      dislikes: 2,
-      chapter: 3,
-      isLike: false,
-      isDislike: false,
-      date: '2021-10-10T10:00:00',
-    },
-    {
-      id: 2,
-      idUser: 3,
-      content: 'I love this comic so much!',
-      likes: 1203,
-      dislikes: 20,
-      chapter: 0,
-      isLike: false,
-      isDislike: false,
-      date: '2021-10-10T10:00:00',
-    },
-    {
-      id: 3,
-      idUser: 21,
-      content: 'Wowwwww',
-      likes: 12,
-      dislikes: 0,
-      chapter: 10,
-      isLike: false,
-      isDislike: false,
-      date: '2021-10-10T10:00:00',
-    },
-  ],
-  chapters: [
-    {
-      id: 3,
-      name: 'Chapter 3',
-      views: 1249,
-      comments: 3,
-      date: '2021-10-10',
-    },
-    {
-      id: 2,
-      name: 'Chapter 2',
-      views: 1349,
-      comments: 5,
-      date: '2021-10-10',
-    },
-    {
-      id: 1,
-      name: 'Chapter 1',
-      views: 2524,
-      comments: 12,
-      date: '2021-10-10',
-    },
-  ],
-};
 
 function Comic() {
   const { comicName, comicId } = useParams();
@@ -157,7 +83,7 @@ function Comic() {
             <Cover comic={comicInfo} />
           </div>
 
-          <div className="white-color flex flex-1 flex-col">
+          <div className="flex flex-1 flex-col text-white">
             <div className="inline-flex flex-1 flex-col">
               {/* Name */}
               <h1 className="min-w-fit !text-6xl font-bold">
@@ -175,14 +101,24 @@ function Comic() {
                 <div className="flex items-center">
                   {/* Read */}
                   <Link
-                    to={`/${formatPath(comicName)}/${comicId}/${formatPath(firstChapter.name)}/${firstChapter.id}`}>
-                    <button className="md-primary-bg h-12 rounded-md px-10">
+                    to={chapterUrl(
+                      comicName,
+                      comicId,
+                      firstChapter.name,
+                      firstChapter.id
+                    )}>
+                    <button className="theme-primary-bg h-12 rounded-md px-10">
                       Start reading
                     </button>
                   </Link>
                   <Link
-                    to={`/${formatPath(comicName)}/${comicId}/${formatPath(lastChapter.name)}/${lastChapter.id}`}>
-                    <button className="md-primary-bg ml-2 h-12 rounded-md px-10">
+                    to={chapterUrl(
+                      comicName,
+                      comicId,
+                      lastChapter.name,
+                      lastChapter.id
+                    )}>
+                    <button className="theme-primary-bg ml-2 h-12 rounded-md px-10">
                       Latest chapter
                     </button>
                   </Link>
@@ -210,7 +146,7 @@ function Comic() {
                       'border-red-400': comicInfo.status === 'Dropped',
                       'border-yellow-400': comicInfo.status === 'Ongoing',
                     },
-                    'black-color ml-2 flex h-12 min-w-12 items-center justify-center rounded-md border  px-3 font-medium'
+                    'ml-2 flex h-12 min-w-12 items-center justify-center rounded-md border px-3 font-medium text-black'
                   )}>
                   <span className="mr-3">Status: </span>
                   <span
@@ -238,23 +174,23 @@ function Comic() {
             </div>
           )}
 
-          {/* Info index */}
+          {/* Info */}
           <div className="mt-2 flex items-center">
-            <div className="md-primary-color flex cursor-pointer items-center">
+            <div className="theme-primary-text flex cursor-pointer items-center">
               <FaRegStar className="text-2xl" />
               <span className="ml-1 mt-1 text-lg">{comicInfo.rating}</span>
             </div>
             <div className="ml-5 flex cursor-pointer items-center">
-              <FiBookmark className="text-2xl" />
-              <span className="ml-1 mt-1 text-lg">{comicInfo.bookmarks}</span>
+              <MdOutlineRemoveRedEye className="text-2xl" />
+              <span className="ml-1 mt-1 text-lg">{comicInfo.views}</span>
             </div>
             <div className="ml-5 flex cursor-pointer items-center">
               <FaRegComment className="text-2xl" />
               <span className="ml-1 mt-1 text-lg">{comicInfo.comments}</span>
             </div>
             <div className="ml-5 flex cursor-pointer items-center">
-              <MdOutlineRemoveRedEye className="text-2xl" />
-              <span className="ml-1 mt-1 text-lg">{comicInfo.views}</span>
+              <FiBookmark className="text-2xl" />
+              <span className="ml-1 mt-1 text-lg">{comicInfo.bookmarks}</span>
             </div>
           </div>
 
@@ -263,81 +199,67 @@ function Comic() {
             {comicInfo.genres.map((genre, index) => (
               <span
                 key={index}
-                className="md-primary-border md-primary-color mr-2 mt-2 cursor-pointer rounded-md px-3 py-1">
-                {genre}
+                className="theme-primary-border theme-primary-text mr-2 mt-2 cursor-pointer rounded-md border px-3 py-1">
+                {genre.title}
               </span>
             ))}
           </div>
+
+          {/* Description */}
+          <div className="my-10 flex flex-col">
+            <h4 className="theme-border-border mb-3 border-b pb-1 font-medium">
+              Summary
+            </h4>
+            <p className="">{breakLine(comicInfo.description)}</p>
+          </div>
         </div>
 
-        {/* Description - Chapter - Comment */}
+        {/* Chapter - Comment */}
         <div className="flex">
           <div className="w-7/12">
-            {/* Description */}
-            <div className="my-10">
-              {comic.descriptions.map((description, index) => {
-                return (
-                  <p key={index} className="mt-4">
-                    {description}
-                  </p>
-                );
-              })}
-            </div>
-
             {/* Chapter */}
-            <div>
-              <h3
-                className={clsx(
-                  styles['header-box'],
-                  'px-4 py-2 text-2xl font-semibold'
-                )}>
-                Chapters
-              </h3>
-              <div
-                className={clsx(
-                  styles['body-box'],
-                  'md-primary-border max-h-[500px] overflow-y-auto border-opacity-10'
-                )}>
-                {listChapters.map((chapter, index) => {
-                  return (
-                    <Link
-                      key={index}
-                      to={`/${formatPath(comicName)}/${comicId}/${formatPath(chapter.name)}/${chapter.id}`}
-                      onClick={() => {
-                        handleUpdateChapterViews(chapter.id);
-                      }}
-                      className={clsx(
-                        styles['item-chapter'],
-                        styles['item-box'],
-                        'flex cursor-pointer items-center justify-between px-4 py-2'
-                      )}>
-                      <span className="text-lg">{chapter.name}</span>
+            <h3 className="px-4 py-2 text-2xl font-semibold">Chapters</h3>
+            <div className="theme-border-border max-h-[500px] overflow-y-auto border">
+              {listChapters.map((chapter, index) => {
+                return (
+                  <Link
+                    key={index}
+                    to={chapterUrl(
+                      comicName,
+                      comicId,
+                      chapter.name,
+                      chapter.id
+                    )}
+                    onClick={() => {
+                      handleUpdateChapterViews(chapter.id);
+                    }}
+                    className="flex cursor-pointer items-center justify-between px-4 py-2">
+                    <span className="text-lg">{chapter.name}</span>
 
-                      {/* Comment - View - Release date */}
-                      <div className="flex flex-col items-center">
-                        <div className="flex">
-                          <span className="ml-3 flex items-center">
-                            <FaRegComment className="mr-1" />
-                            {chapter.comments}
-                          </span>
-                          <span className="ml-3 flex items-center">
-                            <MdOutlineRemoveRedEye className="mr-1" />
-                            {chapter.views}
-                          </span>
-                        </div>
-                        <span className="mt-1 w-full text-end text-sm">
-                          {timeAgo(chapter.updateAt)}
+                    {/* Comment - View - Release date */}
+                    <div className="flex flex-col items-center">
+                      <div className="flex">
+                        <span className="ml-3 flex items-center">
+                          <FaRegComment className="mr-1" />
+                          {chapter.comments}
+                        </span>
+                        <span className="ml-3 flex items-center">
+                          <MdOutlineRemoveRedEye className="mr-1" />
+                          {chapter.views}
                         </span>
                       </div>
-                    </Link>
-                  );
-                })}
-              </div>
+                      <span className="mt-1 w-full text-end text-sm">
+                        {timeAgo(chapter.createAt)}
+                      </span>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           </div>
 
           {/* Comments */}
-          <div className="ml-5 mt-10 max-h-full flex-1">
+          <div className="ml-5 max-h-full flex-1">
             <h3
               className={clsx(
                 styles['header-box'],

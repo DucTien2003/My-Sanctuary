@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import SearchInput from './SearchInput';
 import UserMenu from './UserMenu';
 import styles from './header.module.scss';
+import { homeUrl } from '@/routes';
 import { MenuIcon } from '@/utils/icon';
 import { useWindowScroll } from '@/hooks';
 import { useSideBarStore, sideBarActions } from '@/store';
@@ -21,7 +22,7 @@ function Header({ isAbsolute = false }) {
   return (
     <div
       className={clsx(
-        { 'md-primary-border-b !bg-white': !isTop },
+        { 'theme-primary-border border-b !bg-white': !isTop },
         { absolute: isAbsolute, fixed: !isAbsolute },
         styles['header'],
         'left-0 right-0 top-0 z-50'
@@ -43,7 +44,7 @@ function Header({ isAbsolute = false }) {
                 <MenuIcon />
               </IconButton>
 
-              <Link to="/" className="flex items-center">
+              <Link to={homeUrl()} className="flex items-center">
                 <img
                   src="https://mangadex.org/img/brand/mangadex-logo.svg"
                   alt="logo img"

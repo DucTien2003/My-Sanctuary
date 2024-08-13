@@ -1,3 +1,7 @@
+import axios from 'axios';
+import { Fragment } from 'react';
+import { format } from 'date-fns';
+
 const extend = Object.assign;
 
 // Add zero
@@ -48,13 +52,20 @@ const timeAgo = (timestamp) => {
   return `${diffInYears} years ago`;
 };
 
+const timeStandard = (timestamp) => {
+  return format(new Date(timestamp), 'dd/MM/yyyy');
+};
+
 const showQuantity = (number) => {
   return number >= 1000 ? (number / 1000).toFixed(1) + 'k' : number;
 };
 
 // Reformat path
 const formatPath = (path) => {
-  return path.toLowerCase().replace(/\s+/g, '-');
+  return path
+    .replace(/[^a-zA-Z0-9-]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .toLowerCase();
 };
 
 // Remove slash at the end of string
@@ -73,13 +84,43 @@ const sortByLastNumber = (arr, ascending = false) => {
   });
 };
 
+const convertImageToFile = async (imageUrl) => {
+  const response = await axios.get(imageUrl, { responseType: 'blob' });
+  const blob = response.data;
+
+  const urlParts = imageUrl.split('/');
+  const filename = urlParts[urlParts.length - 1];
+
+  const mimeType = blob.type;
+
+  const file = new File([blob], filename, { type: mimeType });
+  return file;
+};
+
+const reverseArray = (arr) => {
+  return arr.slice().reverse();
+};
+
+const breakLine = (str) => {
+  return str.split('\n').map((item, index) => (
+    <Fragment key={index}>
+      {item}
+      <br />
+    </Fragment>
+  ));
+};
+
 export {
   extend,
   addZero,
   isEmpty,
   timeAgo,
-  showQuantity,
+  breakLine,
   formatPath,
+  reverseArray,
+  timeStandard,
+  showQuantity,
   removeEndSlash,
   sortByLastNumber,
+  convertImageToFile,
 };

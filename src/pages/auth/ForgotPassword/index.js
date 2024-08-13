@@ -4,6 +4,7 @@ import { Fragment, useRef } from 'react';
 import axiosCustom from '@/api/axiosCustom';
 import Input from '@/components/common/Input';
 import { forgotPasswordApi } from '@/api';
+import { loginUrl } from '@/routes';
 import { FaAnglesLeft, required, requiredEmail } from '@/utils';
 
 function ForgotPassword() {
@@ -56,7 +57,7 @@ function ForgotPassword() {
           </div>
 
           <button
-            className="md-primary-bg mt-4 w-full rounded-lg py-2 font-semibold"
+            className="theme-primary-bg mt-4 w-full rounded-lg py-2 font-semibold"
             onClick={handleSubmit}>
             Submit
           </button>
@@ -65,8 +66,8 @@ function ForgotPassword() {
 
       <div className="flex justify-center py-4">
         <Link
-          to="/login"
-          className="!md-primary-color flex items-center justify-center hover:underline">
+          to={loginUrl()}
+          className="!theme-primary-text flex items-center justify-center hover:underline">
           <FaAnglesLeft />
           <span className="ml-1 mt-1">Back to Login</span>
         </Link>

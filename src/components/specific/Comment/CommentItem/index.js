@@ -97,7 +97,7 @@ function CommentItem({ comment, comicId, authInfo, isLogin }) {
   return (
     <div className="flex">
       {/* Avatar */}
-      <div className="">
+      <div>
         <img
           src={comment.user.avatar}
           alt="avatar"
@@ -106,8 +106,8 @@ function CommentItem({ comment, comicId, authInfo, isLogin }) {
       </div>
 
       <div className="flex-1">
-        <div className={clsx('flex flex-col')}>
-          <div className="flex flex-col rounded-lg bg-slate-100 p-2">
+        <div className="flex flex-col">
+          <div className="flex flex-col rounded-lg bg-slate-100 p-2 shadow">
             {/* Name user comment */}
             <div className="flex items-center">
               <span className="font-medium">{comment.user.name}</span>
@@ -126,7 +126,7 @@ function CommentItem({ comment, comicId, authInfo, isLogin }) {
           <div className="mt-1 flex items-center">
             <span
               className={clsx(
-                { 'md-primary-color': isLike },
+                { 'theme-primary-text': isLike },
                 'flex cursor-pointer items-center'
               )}
               onClick={handleLike}>
@@ -135,7 +135,7 @@ function CommentItem({ comment, comicId, authInfo, isLogin }) {
             </span>
             <span
               className={clsx(
-                { 'md-primary-color': isDislike },
+                { 'theme-primary-text': isDislike },
                 'ml-3 flex cursor-pointer items-center'
               )}
               onClick={handleDislike}>
@@ -144,7 +144,7 @@ function CommentItem({ comment, comicId, authInfo, isLogin }) {
             </span>
             <span
               className={clsx(
-                'hover-md-primary-color ml-3 flex cursor-pointer items-center'
+                'hover-theme-primary-text ml-3 flex cursor-pointer items-center'
               )}
               onClick={() => handleShowReplyInput(comment.id)}>
               <FaRegComment className="mr-1" />
@@ -169,7 +169,7 @@ function CommentItem({ comment, comicId, authInfo, isLogin }) {
               ))
             ) : (
               <p
-                className="hover-md-primary-color mt-3 cursor-pointer text-sm hover:underline"
+                className="hover-theme-primary-text mt-3 cursor-pointer text-sm hover:underline"
                 onClick={() => setIsShowReplied(true)}>
                 {`View all ${listReplies.length} replies`}
               </p>
@@ -199,7 +199,7 @@ function CommentItem({ comment, comicId, authInfo, isLogin }) {
             <div className="mt-1 w-full text-end">
               <button
                 className={clsx(
-                  'md-primary-bg white-color rounded px-4 py-1 text-sm font-medium'
+                  'theme-primary-bg rounded px-4 py-1 text-sm font-medium text-white'
                 )}
                 onClick={handleReplyComment}>
                 Send

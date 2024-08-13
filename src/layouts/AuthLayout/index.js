@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import { Link } from 'react-router-dom';
 
 import styles from './authLayout.module.scss';
+import { homeUrl } from '@/routes';
 
 function AuthLayout({ children }) {
   return (
@@ -13,7 +14,7 @@ function AuthLayout({ children }) {
       <div className={clsx(styles['auth-container'])}>
         <div className="my-4 flex justify-center">
           <Link
-            to="/"
+            to={homeUrl()}
             className={clsx(
               styles['logo'],
               'flex items-center justify-center hover:underline'

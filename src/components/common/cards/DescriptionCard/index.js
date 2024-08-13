@@ -1,7 +1,9 @@
 import clsx from 'clsx';
+import { Link } from 'react-router-dom';
 
 import Cover from '@/components/common/Cover';
 import styles from './descriptionCard.module.scss';
+import { comicUrl } from '@/routes';
 
 function DescriptionCard({ comic }) {
   return (
@@ -11,38 +13,39 @@ function DescriptionCard({ comic }) {
         <Cover comic={comic} />
 
         {/* Cover info */}
-        <div
+        <Link
+          to={comicUrl(comic.name, comic.id)}
           className={clsx(
             styles['card-overlay'],
-            'absolute inset-0 flex cursor-pointer flex-col justify-between text-white'
+            'absolute inset-0 flex cursor-pointer flex-col justify-between !text-white'
           )}>
           {/* Description */}
-          <div className="mt-2 overflow-y-auto">
+          <div className="my-2 overflow-y-auto">
             <div className={clsx(styles['description'], 'hidden gap-y-2 px-2')}>
-              {comic.descriptions[0]
-                ? comic.descriptions.map((desc, index) => (
-                    <p key={index}>{desc}</p>
-                  ))
-                : 'No description'}
+              <p>{comic.description ? comic.description : 'No description'}</p>
             </div>
           </div>
 
           {/* Info */}
           <div className={clsx(styles['card-info'], 'p-2')}>
             <div className="flex flex-col">
-              <span className={clsx(styles['card-name'], 'font-semibold')}>
-                name
+              <span
+                className={clsx(
+                  styles['card-name'],
+                  'limit-line-1 break-all font-semibold'
+                )}>
+                {comic.name}
               </span>
               <span
                 className={clsx(
                   styles['card-author'],
-                  'text-xs text-gray-300'
+                  'limit-line-1 break-all text-xs text-gray-300'
                 )}>
-                author
+                {comic.author}
               </span>
             </div>
           </div>
-        </div>
+        </Link>
       </div>
     </div>
   );

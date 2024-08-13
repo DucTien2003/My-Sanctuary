@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 import ChapterSelector from '@/components/specific/ChapterSelector';
+import { chapterUrl, comicUrl } from '@/routes';
 import { formatPath } from '@/utils';
 import { useGetData } from '@/hooks';
 import {
@@ -51,20 +52,30 @@ function Chapter() {
 
   const prevChapterUrl = isFirstChapter
     ? '/'
-    : `/${comicName}/${comicId}/${formatPath(listChapters[chapterInfo.index - 2].name)}/${Number(chapterId) - 1}`;
+    : chapterUrl(
+        comicName,
+        comicId,
+        listChapters[chapterInfo.index - 2].name,
+        Number(chapterId) - 1
+      );
   const nextChapterUrl = isLastChapter
     ? '/'
-    : `/${comicName}/${comicId}/${formatPath(listChapters[chapterInfo.index].name)}/${Number(chapterId) + 1}`;
+    : chapterUrl(
+        comicName,
+        comicId,
+        listChapters[chapterInfo.index].name,
+        Number(chapterId) + 1
+      );
 
   return (
     <div>
       {/* Header */}
-      <div className="md-status-grey-border-b container mt-20 pb-8">
+      <div className="container mt-20 pb-8">
         {/* Title */}
         <div className="flex items-center text-xl">
           <Link
-            to={`/${formatPath(comicInfo.name)}/${comicInfo.id}`}
-            className="hover-md-primary-color md-primary-color">
+            to={comicUrl(comicInfo.name, comicInfo.id)}
+            className="hover-theme-primary-text theme-primary-text">
             {comicInfo.name}
           </Link>
           <span className="mx-1">-</span>
@@ -74,13 +85,13 @@ function Chapter() {
         {/* Control */}
         <div className="mt-6 flex">
           {isFirstChapter ? (
-            <div className="border-color-border flex cursor-default items-center justify-center rounded px-10 font-medium">
+            <div className="theme-border-border flex cursor-default items-center justify-center rounded px-10 font-medium">
               Previous chapter
             </div>
           ) : (
             <Link
               to={prevChapterUrl}
-              className="md-primary-border hover-md-primary-color flex items-center justify-center rounded px-10 font-medium">
+              className="theme-primary-border hover-theme-primary-text flex items-center justify-center rounded border px-10 font-medium">
               Previous chapter
             </Link>
           )}
@@ -92,13 +103,13 @@ function Chapter() {
             />
           </div>
           {isLastChapter ? (
-            <div className="border-color-border flex cursor-default items-center justify-center rounded px-10 font-medium">
+            <div className="theme-border-border flex cursor-default items-center justify-center rounded px-10 font-medium">
               Next chapter
             </div>
           ) : (
             <Link
               to={nextChapterUrl}
-              className="md-primary-border hover-md-primary-color flex items-center justify-center rounded px-10 font-medium">
+              className="theme-primary-border hover-theme-primary-text flex items-center justify-center rounded border px-10 font-medium">
               Next chapter
             </Link>
           )}
@@ -110,7 +121,7 @@ function Chapter() {
         {listImages.map((image, index) => {
           return (
             <div key={index}>
-              <img src={image} alt="img" className="w-full object-cover" />
+              <img src={image.url} alt="img" className="w-full object-cover" />
             </div>
           );
         })}

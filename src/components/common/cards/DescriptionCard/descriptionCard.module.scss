@@ -9,7 +9,7 @@
     background-color: rgba(0, 0, 0, 0.8);
 
     .card-name {
-      color: $md-primary;
+      color: rgb(var(--theme-primary));
     }
 
     .card-author {

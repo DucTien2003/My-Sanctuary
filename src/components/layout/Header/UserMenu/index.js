@@ -2,12 +2,14 @@ import clsx from 'clsx';
 import { Link } from 'react-router-dom';
 import { useState, Fragment } from 'react';
 
-import { useDropdown } from '@/hooks';
+import { uploadUrl, loginUrl, registerUrl } from '@/routes';
 import { isEmpty } from '@/utils';
+import { useDropdown } from '@/hooks';
 import {
   FiUser,
   FiLogIn,
   FiLogOut,
+  FiUpload,
   LuHistory,
   FaRegBell,
   FiUserPlus,
@@ -15,15 +17,16 @@ import {
   CiSettings,
 } from '@/utils';
 
-const userMenuList = [
-  { title: 'My profile', icon: FiUser, to: '/' },
-  { title: 'My Bookmarks', icon: FiBookmark, to: '/' },
-  { title: 'My History', icon: LuHistory, to: '/' },
-  { title: 'My Settings', icon: CiSettings, to: '/' },
-  { title: 'Announcements', icon: FaRegBell, to: '/' },
-];
-
 function UserMenu({ userInfo }) {
+  const userMenuList = [
+    { title: 'My profile', icon: FiUser, to: '/' },
+    { title: 'My Bookmarks', icon: FiBookmark, to: '/' },
+    { title: 'My History', icon: LuHistory, to: '/' },
+    { title: 'Upload Comic', icon: FiUpload, to: uploadUrl() },
+    { title: 'My Settings', icon: CiSettings, to: '/' },
+    { title: 'Announcements', icon: FaRegBell, to: '/' },
+  ];
+
   const [isLogin, setIsLogin] = useState(!isEmpty(userInfo));
 
   const handleLogOut = () => {
@@ -36,7 +39,7 @@ function UserMenu({ userInfo }) {
   return (
     <div
       ref={dropdownRef}
-      className="black-color relative flex justify-center"
+      className="relative flex justify-center text-black"
       onClick={() => setIsShowDropdown(!isShowDropdown)}>
       <span>
         <img
@@ -46,19 +49,19 @@ function UserMenu({ userInfo }) {
               : require('@/assets/images/user-avatar-1.png')
           }
           alt="user avatar"
-          className="md-accent-bg ml-4 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full"
+          className="theme-white-10-bg ml-4 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full"
         />
       </span>
 
       <div
         className={clsx(
           { flex: isShowDropdown, hidden: !isShowDropdown },
-          'md-accent-bg absolute right-0 top-full min-w-64 flex-col rounded p-2 shadow-lg'
+          'theme-white-10-bg absolute right-0 top-full min-w-64 flex-col rounded p-2 shadow-lg'
         )}>
         {/* avatar */}
         <Link
           to="/"
-          className="hover-md-accent-hover-bg md-primary-border-b cursor-pointer rounded py-2">
+          className="hover-theme-white-20-bg theme-primary-border cursor-pointer rounded border-b py-2">
           <div className="text-center">
             <img
               src={
@@ -85,7 +88,7 @@ function UserMenu({ userInfo }) {
                   <Link
                     key={index}
                     to={item.to}
-                    className="hover-md-accent-hover-bg hover-md-primary-color flex w-full items-center rounded px-4 py-3">
+                    className="hover-theme-white-20-bg hover-theme-primary-text flex w-full items-center rounded px-4 py-3">
                     <Icon className="mr-2" />
                     <span>{item.title}</span>
                   </Link>
@@ -93,8 +96,8 @@ function UserMenu({ userInfo }) {
               })}
 
               <Link
-                to="/login"
-                className="hover-md-accent-hover-bg hover-md-primary-color flex w-full items-center rounded px-4 py-3"
+                to={loginUrl()}
+                className="hover-theme-white-20-bg hover-theme-primary-text flex w-full items-center rounded px-4 py-3"
                 onClick={handleLogOut}>
                 <FiLogOut className="mr-2" />
                 <span>Sign out</span>
@@ -103,14 +106,14 @@ function UserMenu({ userInfo }) {
           ) : (
             <Fragment>
               <Link
-                to="/login"
-                className="hover-md-accent-hover-bg hover-md-primary-color flex w-full items-center rounded px-4 py-3">
+                to={loginUrl()}
+                className="hover-theme-white-20-bg hover-theme-primary-text flex w-full items-center rounded px-4 py-3">
                 <FiLogIn className="mr-2" />
                 <span>Login</span>
               </Link>
               <Link
-                to="/register"
-                className="hover-md-accent-hover-bg hover-md-primary-color flex w-full items-center rounded px-4 py-3">
+                to={registerUrl()}
+                className="hover-theme-white-20-bg hover-theme-primary-text flex w-full items-center rounded px-4 py-3">
                 <FiUserPlus className="mr-2" />
                 <span>Register</span>
               </Link>

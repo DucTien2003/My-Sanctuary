@@ -80,7 +80,7 @@ function ReplyItem({ reply, isLogin, handleShowReplyInput }) {
           <div className="mt-1 flex items-center">
             <span
               className={clsx(
-                { 'md-primary-color': isLike },
+                { 'theme-primary-text': isLike },
                 'flex cursor-pointer items-center'
               )}
               onClick={handleLike}>
@@ -89,7 +89,7 @@ function ReplyItem({ reply, isLogin, handleShowReplyInput }) {
             </span>
             <span
               className={clsx(
-                { 'md-primary-color': isDislike },
+                { 'theme-primary-text': isDislike },
                 'ml-3 flex cursor-pointer items-center'
               )}
               onClick={handleDislike}>
@@ -98,7 +98,7 @@ function ReplyItem({ reply, isLogin, handleShowReplyInput }) {
             </span>
             <span
               className={clsx(
-                'hover-md-primary-color ml-3 flex cursor-pointer items-center'
+                'hover-theme-primary-text ml-3 flex cursor-pointer items-center'
               )}
               onClick={() => handleShowReplyInput(reply.id)}>
               <FaRegComment className="mr-1" />

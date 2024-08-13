@@ -9,18 +9,7 @@
 
 html {
   font-size: 16px;
-}
 
-body {
-  font-family: 'Roboto', 'Poppins', Arial, sans-serif;
-  color: $text-color;
-  font-size: 1rem;
-  line-height: 1.3;
-  text-rendering: optimizeSpeed;
-}
-
-// scrollBar css
-html {
   *::-webkit-scrollbar {
     border-radius: 0;
     width: 8px;
@@ -28,13 +17,21 @@ html {
 
   *::-webkit-scrollbar-thumb {
     border-radius: 4px;
-    background-color: $md-scrollbar-thumb;
+    background-color: var(--scrollbar-color);
   }
 
   *::-webkit-scrollbar-track {
     border-radius: 0;
     background-color: rgba(0, 0, 0, 0);
   }
+}
+
+body {
+  font-family: 'Roboto', 'Poppins', Arial, sans-serif;
+  color: var(--back-theme-10);
+  font-size: 1rem;
+  line-height: 1.3;
+  text-rendering: optimizeSpeed;
 }
 
 a {
@@ -117,53 +114,47 @@ h6 {
 }
 
 @each $name, $color in $colors {
-  .#{$name}-color {
-    color: $color;
+  .#{$name}-text {
+    color: rgb($color);
   }
 
-  .hover-#{$name}-color {
+  .hover-#{$name}-text {
     &:hover {
-      color: $color;
+      color: rgb($color);
     }
   }
 
-  .#{$name}-bg {
-    background-color: $color;
+  .\!#{$name}-text {
+    color: rgb($color) !important;
   }
 
-  .\!#{$name}-color {
-    color: $color !important;
+  .#{$name}-bg {
+    background-color: rgb($color);
   }
 
   .\!#{$name}-bg {
-    background-color: $color !important;
-  }
-
-  .#{$name}-border-b {
-    border-bottom: 1px solid $color;
-  }
-
-  .#{$name}-border-t {
-    border-top: 1px solid $color;
+    background-color: rgb($color) !important;
   }
 
   .#{$name}-border {
-    border: 1px solid $color;
+    border-color: rgb($color);
   }
 
   .hover-#{$name}-bg {
     &:hover {
-      background-color: $color;
+      background-color: rgb($color);
     }
   }
 }
 
 @for $i from 1 through 10 {
-  .limited-line-#{$i} {
+  .limit-line-#{$i} {
     overflow: hidden;
     display: -webkit-box;
-    -webkit-line-clamp: #{$i}; /* number of lines to show */
+    -webkit-line-clamp: #{$i};
     -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    white-space: normal;
   }
 }
 

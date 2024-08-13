@@ -1,12 +1,12 @@
 import { Link } from 'react-router-dom';
-
-import Filter from '@/components/specific/Filter';
-import DetailCard from '@/components/common/cards/DetailCard';
-import PaginationComponent from '@/components/specific/PaginationComponent';
-import { FaArrowLeft } from '@/utils';
-import { genres } from '@/api/filter';
-import { latestUpdates } from '@/api/comicList';
 import { useEffect, useState } from 'react';
+
+import DetailCard from '@/components/common/cards/DetailCard';
+import GenresSelector from '@/components/specific/GenresSelector';
+import PaginationComponent from '@/components/specific/PaginationComponent';
+import { homeUrl } from '@/routes';
+import { FaArrowLeft } from '@/utils';
+import { latestUpdates } from '@/api/comicList';
 
 const NUMBER_OF_COMICS_PER_PAGE = 18;
 
@@ -30,18 +30,20 @@ function ComicList() {
   return (
     <div className="my-20">
       <div className="container">
-        {/* Direction */}
+        {/* Back */}
         <Link
-          to="/"
-          className="md-primary-border hover-md-primary-color inline-flex items-center rounded-lg px-4 py-2 font-semibold">
+          to={homeUrl()}
+          className="hover-theme-primary-text inline-flex items-center rounded-lg border px-4 py-2 font-semibold">
           <FaArrowLeft />
           <h5 className="ml-2">Back to Home</h5>
         </Link>
 
         {/* Filter */}
         <div className="mt-10 flex items-center justify-between">
-          <h1 className="md-primary-color">Comic list</h1>
-          <Filter genres={genres} />
+          <h1 className="theme-primary-text">Comic list</h1>
+          <div className="w-[400px]">
+            <GenresSelector id="filter" label="Filter" />
+          </div>
         </div>
 
         {/* Display */}

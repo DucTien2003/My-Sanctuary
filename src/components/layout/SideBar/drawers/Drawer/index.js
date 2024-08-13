@@ -13,7 +13,7 @@ export default function TemporaryDrawer() {
       <Drawer
         open={sideBarState.isShow}
         onClose={() => sideBarDispatch(sideBarActions.hiddenSideBar())}
-        className="md-accent-bg">
+        className="theme-white-10-bg">
         <Box
           sx={{ width: 250 }}
           role="presentation"

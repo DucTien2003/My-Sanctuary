@@ -4,8 +4,8 @@
   font-weight: 600;
 
   &.Mui-selected {
-    border: 1px solid $md-primary;
-    color: $md-primary;
-    background-color: rgba($color: $md-primary, $alpha: 0.1);
+    border: 1px solid var(--theme-primary);
+    color: var(--theme-primary);
+    background-color: rgba($color: var(--theme-primary), $alpha: 0.1);
   }
 }

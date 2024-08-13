@@ -6,7 +6,7 @@
   transition: outline 0.2s ease-out;
 
   &:focus {
-    outline: 2px solid $md-primary;
+    outline: 2px solid var(--theme-primary);
   }
 
   &.error-input {

@@ -1,18 +1,35 @@
+import clsx from 'clsx';
+import { Link } from 'react-router-dom';
+
+import styles from './monotonicCard.module.scss';
+
 import Cover from '@/components/common/Cover';
+import { comicUrl } from '@/routes';
 
 function MonotonicCard({ comic }) {
   return (
-    <div className="w-full rounded shadow-xl">
+    <Link
+      className={clsx(
+        styles['monotonic-card'],
+        'w-full cursor-pointer rounded shadow-xl'
+      )}
+      to={comicUrl(comic.name, comic.id)}>
       {/* Cover */}
-      <div className="md-primary-border rounded">
+      <div className="theme-primary-border rounded border">
         <Cover comic={comic} />
       </div>
 
       {/* Chapter */}
-      <div className="flex flex-col p-1 pb-2">
-        <p className="limited-line-2 font-medium">{comic.name}</p>
+      <div className="flex flex-col px-1 py-2">
+        <p
+          className={clsx(
+            styles['card-name'],
+            'limit-line-1 break-all font-medium'
+          )}>
+          {comic.name}
+        </p>
       </div>
-    </div>
+    </Link>
   );
 }
 

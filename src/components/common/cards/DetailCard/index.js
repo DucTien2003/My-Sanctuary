@@ -1,15 +1,18 @@
 import clsx from 'clsx';
+import { Link } from 'react-router-dom';
 
 import styles from './detailCard.module.scss';
 import Cover from '@/components/common/Cover';
-import { FaEye, FaRegStar } from '@/utils';
-import { Link } from 'react-router-dom';
+import { comicUrl, chapterUrl } from '@/routes';
+import { FaEye, FaRegStar, FiBookmark, FaRegComment, timeAgo } from '@/utils';
 
 function DetailCard({ comic }) {
   return (
     <div className="w-full overflow-hidden rounded shadow-2xl">
       {/* Cover */}
-      <Link to="/relife/1" className="relative overflow-hidden rounded">
+      <Link
+        to={comicUrl(comic.name, comic.id)}
+        className="relative overflow-hidden rounded">
         <Cover comic={comic} />
 
         {/* Cover info */}
@@ -22,15 +25,18 @@ function DetailCard({ comic }) {
             className={clsx(styles['card-info'], 'px-2 pb-2 pt-8 text-white')}>
             <div className="flex flex-col">
               <span
-                className={clsx(styles['card-name'], 'text-sm font-semibold')}>
-                name
+                className={clsx(
+                  styles['card-name'],
+                  'limit-line-2 text-sm font-semibold'
+                )}>
+                {comic.name}
               </span>
               <span
                 className={clsx(
                   styles['card-author'],
-                  'text-xs text-gray-300'
+                  'limit-line-1 break-all text-xs text-gray-300'
                 )}>
-                author
+                {comic.author}
               </span>
             </div>
           </div>
@@ -40,25 +46,40 @@ function DetailCard({ comic }) {
       {/* Chapter */}
       <div className="flex flex-col px-2 py-1">
         <div className="flex items-center justify-between py-1">
-          <div className="flex items-center">
+          <div className="theme-primary-text flex items-center">
             <FaRegStar />
-            <span className="ml-1 text-xs">9999</span>
+            <span className="ml-1 text-xs">{comic.rating}</span>
+          </div>
+          <div className="flex items-center">
+            <FiBookmark />
+            <span className="ml-1 text-xs">{comic.bookmarks}</span>
+          </div>
+          <div className="flex items-center">
+            <FaRegComment />
+            <span className="ml-1 text-xs">{comic.comments}</span>
           </div>
           <div className="flex items-center">
             <FaEye className="text-sm" />
-            <span className="ml-1 text-xs">9999</span>
+            <span className="ml-1 text-xs">{comic.views}</span>
           </div>
         </div>
 
         <div className="flex items-center justify-between py-1">
           <Link
-            to="/comic"
+            to={chapterUrl(
+              comic.name,
+              comic.id,
+              comic.latestChapter.name,
+              comic.latestChapter.id
+            )}
             className={clsx(
-              'hover-md-primary-color inline-block text-xs font-medium'
+              'hover-theme-primary-text limit-line-1 inline-block flex-1 break-all text-xs font-medium'
             )}>
-            Last chapter
+            {comic.latestChapter.name}
           </Link>
-          <span className="ml-1 text-xs">time</span>
+          <span className="ml-2 text-xs">
+            {timeAgo(comic.latestChapter.createAt)}
+          </span>
         </div>
       </div>
     </div>

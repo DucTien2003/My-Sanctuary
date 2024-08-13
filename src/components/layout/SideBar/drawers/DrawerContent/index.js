@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import { Fragment, useState } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 
+import { homeUrl } from '@/routes';
 import { useSideBarStore, sideBarActions } from '@/store';
 import {
   LuHome,
@@ -106,9 +107,9 @@ function DrawerContent() {
   const [id, setId] = useState('0');
 
   return (
-    <div className="md-accent-bg">
+    <div className="theme-white-10-bg">
       <DrawerHeader className="flex w-full !justify-between !pl-4">
-        <Link to="/" className="flex items-center">
+        <Link to={homeUrl()} className="flex items-center">
           <img
             src="https://mangadex.org/img/brand/mangadex-logo.svg"
             alt="logo img"
@@ -135,7 +136,7 @@ function DrawerContent() {
             component={Link}
             to="/"
             className={clsx('flex items-center !rounded-lg !py-1', {
-              '!md-primary-bg !text-white': id === '0',
+              '!theme-primary-bg !text-white': id === '0',
             })}
             onClick={() => setId('0')}>
             <LuHome className="text-2xl" />
@@ -164,7 +165,7 @@ function DrawerContent() {
                       to={subItem.to}
                       className={clsx(
                         {
-                          '!md-primary-bg font-medium !text-white':
+                          '!theme-primary-bg font-medium !text-white':
                             id === subItem.id,
                         },
                         '!py-5px !rounded-lg'

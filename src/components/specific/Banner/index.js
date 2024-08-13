@@ -43,13 +43,13 @@ function Banner() {
       <div className="absolute bottom-3 right-4 z-20">
         <div className="flex items-center">
           {/* Number order */}
-          <span className="md-primary-color mr-2 mt-1 font-semibold uppercase">
+          <span className="theme-primary-text mr-2 mt-1 font-semibold uppercase">
             NO.<span>{currentSlide}</span>
           </span>
 
           {/* Previous button */}
           <button
-            className="hover-md-accent-bg mr-2 flex h-10 w-10 cursor-pointer select-none items-center justify-center rounded-full"
+            className="hover-theme-white-10-bg hover-theme-primary-text mr-2 flex h-10 w-10 cursor-pointer select-none items-center justify-center rounded-full"
             onClick={prevSlide}>
             <span>
               <FaAngleLeft />
@@ -58,7 +58,7 @@ function Banner() {
 
           {/* Next button */}
           <button
-            className="hover-md-accent-bg flex h-10 w-10 cursor-pointer select-none items-center justify-center rounded-full"
+            className="hover-theme-white-10-bg hover-theme-primary-text flex h-10 w-10 cursor-pointer select-none items-center justify-center rounded-full"
             onClick={nextSlide}>
             <span>
               <FaAngleRight />
@@ -110,7 +110,7 @@ function Banner() {
                           {swiperItem.categories.map((category) => (
                             <span
                               key={category}
-                              className="md-status-yellow-bg mr-2 rounded bg-white p-1 text-white">
+                              className="theme-primary-bg mr-2 rounded bg-white p-1 text-white">
                               {category}
                             </span>
                           ))}

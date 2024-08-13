@@ -6,6 +6,7 @@ import { Fragment, useRef } from 'react';
 import styles from './login.module.scss';
 import Input from '@/components/common/Input';
 import { loginApi } from '@/api';
+import { forgotPasswordUrl, registerUrl } from '@/routes';
 import { required, minLength } from '@/utils';
 import { useAlertStore, alertActions } from '@/store';
 
@@ -92,15 +93,15 @@ function Login() {
             </div>
             <span>
               <Link
-                to="/forgot-password"
-                className="!md-primary-color mt-1 hover:underline">
+                to={forgotPasswordUrl()}
+                className="!theme-primary-text mt-1 hover:underline">
                 Forgot Password?
               </Link>
             </span>
           </div>
 
           <button
-            className="md-primary-bg mt-4 w-full rounded-lg py-2 font-semibold"
+            className="theme-primary-bg mt-4 w-full rounded-lg py-2 font-semibold"
             onClick={handleSubmit}>
             Sign In
           </button>
@@ -110,8 +111,8 @@ function Login() {
       <div className={clsx(styles['login-footer'], 'mt-6 py-4 text-center')}>
         <span>New user?</span>
         <Link
-          to="/register"
-          className="!md-primary-color ml-2 inline-block cursor-pointer hover:underline">
+          to={registerUrl()}
+          className="!theme-primary-text ml-2 inline-block cursor-pointer hover:underline">
           Register
         </Link>
       </div>

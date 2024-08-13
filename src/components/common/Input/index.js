@@ -66,7 +66,7 @@ function Input(
         <span
           className={clsx(
             { hidden: type !== 'password' },
-            'md-primary-color absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-xl'
+            'theme-primary-text absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-xl'
           )}
           onClick={togglePassword}>
           {showPassword ? <IoIosEye /> : <IoIosEyeOff />}

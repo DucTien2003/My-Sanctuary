@@ -57,12 +57,12 @@ function Rating({ comicId, authRating }) {
   return (
     <div
       ref={dropdownRef}
-      className="black-color relative flex justify-center font-semibold"
+      className="relative flex justify-center font-semibold text-black"
       onClick={() => setIsShowDropdown(!isShowDropdown)}>
       <span
         className={clsx(
           {
-            'md-primary-bg white-color': rateValue,
+            'theme-primary-bg text-white': rateValue,
             'bg-gray-200 hover:bg-gray-300': !rateValue,
           },
           'flex h-12 min-w-12 cursor-pointer items-center justify-center rounded-md px-3'
@@ -81,7 +81,7 @@ function Rating({ comicId, authRating }) {
             <div
               key={rate.value}
               className={clsx(
-                { 'md-primary-color': rate.value === rateValue },
+                { 'theme-primary-text': rate.value === rateValue },
                 'cursor-pointer rounded-md px-4 py-3 hover:bg-gray-300'
               )}
               onClick={() => handleRating(rate.value)}>

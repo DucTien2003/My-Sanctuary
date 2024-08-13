@@ -4,6 +4,10 @@ const required = (value, name) => {
   return isEmpty(value) || value.includes(' ') ? `${name} is invalid.` : false;
 };
 
+const requiredAcceptSpace = (value, name) => {
+  return isEmpty(value) ? `${name} is invalid.` : false;
+};
+
 const minLength = (min) => {
   return (value, name) => {
     return value.length < min
@@ -34,4 +38,11 @@ const confirmPassword = (valuePassword) => {
   };
 };
 
-export { required, minLength, requiredEmail, requiredNumber, confirmPassword };
+export {
+  required,
+  minLength,
+  requiredEmail,
+  requiredNumber,
+  confirmPassword,
+  requiredAcceptSpace,
+};

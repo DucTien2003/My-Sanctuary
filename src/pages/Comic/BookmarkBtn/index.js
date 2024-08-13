@@ -23,8 +23,8 @@ function BookMarkBtn({ comicInfo }) {
     <span
       className={clsx(
         {
-          'md-primary-bg white-color': isBookmark,
-          'black-color bg-gray-200 hover:bg-gray-300': !isBookmark,
+          'theme-primary-bg text-white': isBookmark,
+          'bg-gray-200 text-black hover:bg-gray-300': !isBookmark,
         },
         'flex h-12 min-w-12 cursor-pointer items-center justify-center rounded-md px-3'
       )}

@@ -73,33 +73,41 @@ function Comment({ comicId }) {
   const isLogin = !isEmpty(authInfo);
 
   return (
-    <div className="md-primary-border max-h-full border-opacity-10 py-3">
-      <div className={clsx()}>
-        {dataRender.map((comment, index) => {
-          return (
-            <div
-              key={comment.id}
-              className={clsx(styles['item-box'], 'mb-2 px-3 pb-4')}>
-              <CommentItem
-                comment={comment}
-                comicId={comicId}
-                authInfo={authInfo}
-                isLogin={isLogin}
-              />
-            </div>
-          );
-        })}
-      </div>
+    <div className="max-h-full py-3">
+      {dataRender.length > 0 ? (
+        <div>
+          {dataRender.map((comment, index) => {
+            return (
+              <div
+                key={comment.id}
+                className={clsx(styles['item-box'], 'mb-2 px-3 pb-4')}>
+                <CommentItem
+                  comment={comment}
+                  comicId={comicId}
+                  authInfo={authInfo}
+                  isLogin={isLogin}
+                />
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="theme-white-10-bg theme-gray-text mx-3 mb-2 flex items-center justify-center rounded py-4 font-medium">
+          Be the first one to comment?
+        </div>
+      )}
 
       {/* Comment pagination */}
-      <div className="my-4 flex w-full justify-center">
-        <PaginationComponent
-          size="large"
-          itemPerPage={NUMBER_OF_COMMENTS_PER_PAGE}
-          list={listComments}
-          handlePageChange={handlePageChange}
-        />
-      </div>
+      {dataRender.length > 0 ? (
+        <div className="my-4 flex w-full justify-center">
+          <PaginationComponent
+            size="large"
+            itemPerPage={NUMBER_OF_COMMENTS_PER_PAGE}
+            list={listComments}
+            handlePageChange={handlePageChange}
+          />
+        </div>
+      ) : null}
 
       {/* Comment input */}
       {isLogin && (
@@ -114,7 +122,7 @@ function Comment({ comicId }) {
           <div className="w-full text-end">
             <button
               className={clsx(
-                'md-primary-bg white-color rounded px-6 py-2 font-medium'
+                'theme-primary-bg rounded px-6 py-2 font-medium text-white'
               )}
               onClick={handleComment}>
               Send

@@ -1,11 +1,5 @@
 @use './variables' as *;
 
-.MuiPaper-root {
-  &.MuiPaper-elevation {
-    // background-color: $md-accent;
-  }
-}
-
 #multiple-filter {
   padding-top: 12px;
   padding-bottom: 12px;
@@ -14,13 +8,13 @@
 
 #multiple-filter-label {
   &.Mui-focused {
-    color: $md-primary;
+    color: rgb(var(--theme-primary));
   }
 }
 
 .Mui-focused {
   .MuiOutlinedInput-notchedOutline {
-    border-color: $md-primary !important;
+    border-color: rgb(var(--theme-primary)) !important;
   }
 }
 
@@ -31,8 +25,21 @@
   }
 }
 
+#status-selector,
 #chapter-selector {
-  a {
+  a,
+  span {
     padding: 0 !important;
+  }
+}
+
+// Genres selector
+.genres-selector {
+  .MuiAutocomplete-endAdornment {
+    display: none;
+  }
+
+  .MuiInputBase-root {
+    padding: 8px !important;
   }
 }

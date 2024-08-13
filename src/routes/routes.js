@@ -1,14 +1,17 @@
 import Home from '@/pages/Home';
 import Comic from '@/pages/Comic';
+import MyUpload from '@/pages/MyUpload';
 import Chapter from '@/pages/Chapter';
 import Login from '@/pages/auth/Login';
 import ComicList from '@/pages/ComicList';
 import Register from '@/pages/auth/Register';
+import UploadComic from '@/pages/UploadComic';
 import ResetPassword from '@/pages/auth/ResetPassword';
 import UpdatePassword from '@/pages/auth/UpdatePassword';
 import ForgotPassword from '@/pages/auth/ForgotPassword';
 
 import { AuthLayout } from '@/layouts';
+import { homeUrl } from './urlStructure';
 
 const publicRoutes = [
   { path: '/', component: Home },
@@ -17,6 +20,19 @@ const publicRoutes = [
   {
     path: '/:comicName/:comicId/:chapterName/:chapterId',
     component: Chapter,
+    headerAbsolute: true,
+  },
+
+  // Upload
+  { path: '/upload', component: MyUpload },
+  {
+    path: '/upload/comic',
+    component: UploadComic,
+    headerAbsolute: true,
+  },
+  {
+    path: '/upload/comic/:comicId',
+    component: UploadComic,
     headerAbsolute: true,
   },
 
