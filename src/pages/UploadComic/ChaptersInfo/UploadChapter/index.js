@@ -12,6 +12,7 @@ function UploadChapter({ chapter = {}, comicInfo = {} }) {
   const indexRef = useRef();
   const imagesRef = useRef();
   const chapterNameRef = useRef();
+  const resetModalRef = useRef();
   const createModalRef = useRef();
 
   const [imageFiles, setImageFiles] = useState([]);
@@ -104,7 +105,7 @@ function UploadChapter({ chapter = {}, comicInfo = {} }) {
         <div className="mb-6 flex items-center justify-end">
           <button
             className="theme-primary-border mr-3 h-12 rounded-md border border-solid px-10 text-lg font-medium"
-            onClick={handleReset}>
+            onClick={() => resetModalRef.current.openModal()}>
             Reset
           </button>
 
@@ -146,20 +147,30 @@ function UploadChapter({ chapter = {}, comicInfo = {} }) {
       </div>
 
       <ModalComponent
+        title="Reset chapter info"
+        submitTitle="Reset"
+        handleSubmit={handleReset}
+        ref={resetModalRef}>
+        <p>Are you sure you want to reset the chapter info?</p>
+        <p className="mt-1">Your data will be lost.</p>
+      </ModalComponent>
+      <ModalComponent
         title="Create chapter"
         submitTitle="Confirm"
         handleSubmit={handleConfirm}
         ref={createModalRef}>
-        {/* <p>
-          {chapter.id
-            ? `Are you sure you want to update info of <span>${chapter.name}</span>?`
-            : `Are you sure you want to create ${chapterNameRef.current.getValue()}?`}
+        <p>
+          {chapter.id ? (
+            <span>Are you sure you want to update info of {chapter.name}?</span>
+          ) : (
+            <span>Are you sure you want to create the new chapter?</span>
+          )}
         </p>
         <p className="mt-1">
           {chapter.id
             ? 'Your changes will be saved.'
-            : 'The info will be saved'}
-        </p> */}
+            : 'The info will be saved.'}
+        </p>
       </ModalComponent>
     </Fragment>
   );

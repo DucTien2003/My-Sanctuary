@@ -14,7 +14,6 @@ function TextFieldInput(
     required = false,
     multiline = false,
     variant = 'outlined',
-    min = 0,
   },
   ref
 ) {
@@ -55,9 +54,7 @@ function TextFieldInput(
   }));
 
   const handleChange = (event) => {
-    return type === 'number' && event.target.value < min
-      ? setValue(min)
-      : setValue(event.target.value);
+    setValue(event.target.value);
   };
 
   return (
@@ -66,7 +63,6 @@ function TextFieldInput(
       size={size}
       value={value}
       type={type}
-      inputProps={type === 'number' ? { min: min } : {}}
       label={required ? label + '*' : label}
       variant={variant}
       multiline={multiline}
