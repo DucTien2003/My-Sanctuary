@@ -5,6 +5,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import axiosCustom from '@/api/axiosCustom';
 import Cover from '@/components/common/Cover';
 import ModalComponent from '@/components/specific/ModalComponent';
+import AppIconButton from '@/components/common/buttons/AppIconButton';
+import DefaultButton from '@/components/common/buttons/DefaultButton';
 import { useGetData } from '@/hooks';
 import { uploadComicUrl, editComicUrl } from '@/routes';
 import { useAlertStore, alertActions } from '@/store';
@@ -76,21 +78,19 @@ function MyUpload() {
     <div className="relative mb-10 mt-20">
       <div className="container">
         <div className="flex items-center">
-          <button
-            className="hover-theme-white-10-bg hover-theme-primary-text mr-1 flex h-10 w-10 cursor-pointer select-none items-center justify-center rounded-full"
-            onClick={handleBack}>
-            <span>
-              <FaAngleLeft className="text-xl" />
-            </span>
-          </button>
+          <AppIconButton color="black" onClick={handleBack}>
+            <FaAngleLeft className="text-xl" />
+          </AppIconButton>
           <h2 className="font-semibold">Your Uploaded Comics</h2>
         </div>
 
         <div className="my-4 flex justify-end">
           <Link to={uploadComicUrl()}>
-            <button className="theme-primary-bg mr-3 h-12 rounded-md px-10 text-lg font-medium text-white">
+            <DefaultButton
+              hoverColor="primary.contrastText"
+              className="!ml-2 h-12 !rounded-md !px-10">
               Upload a new comic
-            </button>
+            </DefaultButton>
           </Link>
         </div>
 
@@ -173,15 +173,14 @@ function MyUpload() {
                   </div>
 
                   <div className="flex items-center font-medium">
-                    <div
-                      className="theme-primary-border theme-primary-text cursor-pointer rounded border px-4 py-2"
+                    <DefaultButton
+                      variant="outlined"
+                      className="!mr-2"
                       onClick={() => handleClickDelete(comic)}>
                       Delete
-                    </div>
-                    <Link
-                      to={editComicUrl(comic.id)}
-                      className="theme-primary-bg theme-primary-border ml-1 cursor-pointer rounded border px-4 py-2 !text-white">
-                      Detail
+                    </DefaultButton>
+                    <Link to={editComicUrl(comic.id)}>
+                      <DefaultButton>Detail</DefaultButton>
                     </Link>
                   </div>
                 </div>

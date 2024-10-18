@@ -1,5 +1,6 @@
 import { useReducer } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 import { lightTheme, darkTheme } from '@/plugins/themes';
 
 import ThemeContext from './theme';
@@ -35,6 +36,7 @@ function Provider({ children }) {
   return (
     <ThemeProvider
       theme={themeState.theme === 'light' ? lightTheme : darkTheme}>
+      <CssBaseline />
       <ThemeContext.Provider value={{ themeState, themeDispatch }}>
         <SideBarContext.Provider value={[sideBarState, sideBarDispatch]}>
           <AlertContext.Provider value={[alertState, alertDispatch]}>

@@ -10,6 +10,7 @@ import axiosCustom from '@/api/axiosCustom';
 import Cover from '@/components/common/Cover';
 import Swiper from '@/components/specific/Swiper';
 import Comment from '@/components/specific/Comment';
+import DefaultButton from '@/components/common/buttons/DefaultButton';
 import { useGetData } from '@/hooks';
 import { latestUpdates } from '@/api/home';
 import { breakLine, timeAgo } from '@/utils';
@@ -107,9 +108,11 @@ function Comic() {
                       firstChapter.name,
                       firstChapter.id
                     )}>
-                    <button className="theme-primary-bg h-12 rounded-md px-10">
+                    <DefaultButton
+                      hoverColor="primary.contrastText"
+                      className="h-12 !rounded-md !px-10">
                       Start reading
-                    </button>
+                    </DefaultButton>
                   </Link>
                   <Link
                     to={chapterUrl(
@@ -118,9 +121,11 @@ function Comic() {
                       lastChapter.name,
                       lastChapter.id
                     )}>
-                    <button className="theme-primary-bg ml-2 h-12 rounded-md px-10">
+                    <DefaultButton
+                      hoverColor="primary.contrastText"
+                      className="!ml-2 h-12 !rounded-md !px-10">
                       Latest chapter
-                    </button>
+                    </DefaultButton>
                   </Link>
                   {isLogin && (
                     <div className="flex items-center">

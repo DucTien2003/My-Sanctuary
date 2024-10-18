@@ -2,12 +2,31 @@ import Button from '@mui/material/Button';
 import LoadingButton from '@mui/lab/LoadingButton';
 
 function DefaultButton(props) {
-  const { loading, children, ...otherProps } = props;
+  const {
+    loading,
+    children,
+    color = 'primary',
+    variant = 'contained',
+    hoverColor = variant === 'contained'
+      ? 'primary.contrastText'
+      : 'primary.main',
+    ...otherProps
+  } = props;
 
   const ButtonComponent = loading ? LoadingButton : Button;
 
   return (
-    <ButtonComponent loading={loading} loadingposition="start" {...otherProps}>
+    <ButtonComponent
+      sx={{
+        color,
+        '&:hover': {
+          color: hoverColor,
+        },
+      }}
+      {...otherProps}
+      loading={loading}
+      loadingposition="start"
+      variant={variant}>
       {children}
     </ButtonComponent>
   );

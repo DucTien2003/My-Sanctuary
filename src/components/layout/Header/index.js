@@ -1,11 +1,11 @@
 import clsx from 'clsx';
 import { jwtDecode } from 'jwt-decode';
-import IconButton from '@mui/material/IconButton';
 import { Link } from 'react-router-dom';
 
 import SearchInput from './SearchInput';
 import UserMenu from './UserMenu';
 import styles from './header.module.scss';
+import AppIconButton from '@/components/common/buttons/AppIconButton';
 import { homeUrl } from '@/routes';
 import { MenuIcon } from '@/utils/icon';
 import { useWindowScroll } from '@/hooks';
@@ -35,14 +35,14 @@ function Header({ isAbsolute = false }) {
                 { '!hidden': sideBarState.isShow },
                 'mr-2 flex items-center py-2'
               )}>
-              <IconButton
+              <AppIconButton
                 color="inherit"
                 aria-label="open drawer"
                 onClick={() => sideBarDispatch(sideBarActions.showSideBar())}
                 edge="start"
                 className="!ml-0 !mr-2">
                 <MenuIcon />
-              </IconButton>
+              </AppIconButton>
 
               <Link to={homeUrl()} className="flex items-center">
                 <img

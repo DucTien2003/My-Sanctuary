@@ -4,6 +4,7 @@ import axiosCustom from '@/api/axiosCustom';
 import UploadBox from '@/components/specific/UploadBox';
 import TextFieldInput from '@/components/common/TextFieldInput';
 import ModalComponent from '@/components/specific/ModalComponent';
+import DefaultButton from '@/components/common/buttons/DefaultButton';
 import { useGetData } from '@/hooks/useGetData';
 import { requiredAcceptSpace, convertImageToFile } from '@/utils';
 import { createChapterApi, chapterInfoApi, chapterImagesApi } from '@/api';
@@ -103,17 +104,18 @@ function UploadChapter({ chapter = {}, comicInfo = {} }) {
         <h2 className="mb-8 mt-14 font-medium">Chapter info</h2>
 
         <div className="mb-6 flex items-center justify-end">
-          <button
-            className="theme-primary-border mr-3 h-12 rounded-md border border-solid px-10 text-lg font-medium"
+          <DefaultButton
+            className="!mr-3 h-12 !rounded-md !px-10 text-lg !font-medium"
+            variant="outlined"
             onClick={() => resetModalRef.current.openModal()}>
             Reset
-          </button>
+          </DefaultButton>
 
-          <button
-            className="theme-primary-bg h-12 rounded-md px-10 text-lg font-medium text-white"
+          <DefaultButton
+            className="h-12 !rounded-md !px-10 text-lg !font-medium"
             onClick={handleClickCreate}>
             {chapter.id ? 'Update' : 'Create'}
-          </button>
+          </DefaultButton>
         </div>
 
         <div className="flex gap-2">
@@ -154,6 +156,7 @@ function UploadChapter({ chapter = {}, comicInfo = {} }) {
         <p>Are you sure you want to reset the chapter info?</p>
         <p className="mt-1">Your data will be lost.</p>
       </ModalComponent>
+
       <ModalComponent
         title="Create chapter"
         submitTitle="Confirm"

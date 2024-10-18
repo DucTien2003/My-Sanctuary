@@ -1,6 +1,7 @@
 import { Fragment, useRef, useState, useEffect } from 'react';
 
 import Input from '@/components/common/Input';
+import DefaultButton from '@/components/common/buttons/DefaultButton';
 import { required, confirmPassword } from '@/utils';
 
 function ResetPassword() {
@@ -64,12 +65,12 @@ function ResetPassword() {
             />
           </div>
 
-          <button
-            // type="submit"
-            className="theme-primary-bg my-5 w-full rounded-lg py-2 font-semibold"
+          <DefaultButton
+            className="w-full !rounded-lg font-semibold"
+            hoverColor="primary.contrastText"
             onClick={handleClickSubmit}>
             Confirm
-          </button>
+          </DefaultButton>
         </div>
       </div>
     </Fragment>

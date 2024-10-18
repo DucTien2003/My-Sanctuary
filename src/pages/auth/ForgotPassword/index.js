@@ -3,6 +3,7 @@ import { Fragment, useRef } from 'react';
 
 import axiosCustom from '@/api/axiosCustom';
 import Input from '@/components/common/Input';
+import DefaultButton from '@/components/common/buttons/DefaultButton';
 import { forgotPasswordApi } from '@/api';
 import { loginUrl } from '@/routes';
 import { FaAnglesLeft, required, requiredEmail } from '@/utils';
@@ -56,11 +57,12 @@ function ForgotPassword() {
             />
           </div>
 
-          <button
-            className="theme-primary-bg mt-4 w-full rounded-lg py-2 font-semibold"
+          <DefaultButton
+            className="w-full !rounded-lg font-semibold"
+            hoverColor="primary.contrastText"
             onClick={handleSubmit}>
             Submit
-          </button>
+          </DefaultButton>
         </form>
       </div>
 

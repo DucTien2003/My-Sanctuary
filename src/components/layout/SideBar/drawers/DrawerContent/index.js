@@ -2,12 +2,12 @@ import clsx from 'clsx';
 import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
-import IconButton from '@mui/material/IconButton';
 import ListItemButton from '@mui/material/ListItemButton';
 import { Link } from 'react-router-dom';
 import { Fragment, useState } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 
+import AppIconButton from '@/components/common/buttons/AppIconButton';
 import { homeUrl } from '@/routes';
 import { useSideBarStore, sideBarActions } from '@/store';
 import {
@@ -120,14 +120,14 @@ function DrawerContent() {
             alt="logo text"
           />
         </Link>
-        <IconButton
+        <AppIconButton
           onClick={() => sideBarDispatch(sideBarActions.hiddenSideBar())}>
           {theme.direction === 'ltr' ? (
             <ChevronLeftIcon />
           ) : (
             <ChevronRightIcon />
           )}
-        </IconButton>
+        </AppIconButton>
       </DrawerHeader>
 
       <List className="!px-4 !py-2 text-sm">

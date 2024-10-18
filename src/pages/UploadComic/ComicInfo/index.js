@@ -7,6 +7,7 @@ import SelectInput from '@/components/common/SelectInput';
 import TextFieldInput from '@/components/common/TextFieldInput';
 import ModalComponent from '@/components/specific/ModalComponent';
 import GenresSelector from '@/components/specific/GenresSelector';
+import DefaultButton from '@/components/common/buttons/DefaultButton';
 import { createComicApi, comicInfoApi } from '@/api';
 import { useAlertStore, alertActions } from '@/store';
 import { requiredAcceptSpace, convertImageToFile } from '@/utils';
@@ -116,17 +117,18 @@ function ComicInfo({ comicId, comicInfo = {} }) {
     <Fragment>
       <div className="">
         <div className="mb-6 flex items-center justify-end">
-          <button
-            className="theme-primary-border mr-3 h-12 rounded-md border border-solid px-10 text-lg font-medium"
+          <DefaultButton
+            className="!mr-3 h-12 !rounded-md border !px-10 text-lg font-medium"
+            variant="outlined"
             onClick={() => resetModalRef.current.openModal()}>
             Reset
-          </button>
+          </DefaultButton>
 
-          <button
-            className="theme-primary-bg h-12 rounded-md px-10 text-lg font-medium text-white"
+          <DefaultButton
+            className="h-12 !rounded-md !px-10 text-lg font-medium"
             onClick={() => updateModalRef.current.openModal()}>
             {comicId ? 'Update' : 'Create'}
-          </button>
+          </DefaultButton>
         </div>
 
         <div className="flex">

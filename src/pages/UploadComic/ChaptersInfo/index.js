@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import ListChapter from './ListChapter';
 import UploadChapter from './UploadChapter';
+import DefaultButton from '@/components/common/buttons/DefaultButton';
 
 function ChaptersInfo({ listChapters, comicInfo = {} }) {
   const [isUploading, setIsUploading] = useState(false);
@@ -21,11 +22,11 @@ function ChaptersInfo({ listChapters, comicInfo = {} }) {
     <div>
       <h2 className="mb-8 mt-14 font-medium">Chapters</h2>
 
-      <button
-        className="theme-primary-bg h-12 rounded-md px-10 text-lg font-medium text-white"
+      <DefaultButton
+        className="h-12 !rounded-md !px-10 text-lg font-medium"
         onClick={handleBackOrUploadNewChapter}>
         {isUploading ? 'Back' : 'Upload a new chapter'}
-      </button>
+      </DefaultButton>
 
       {isUploading ? (
         <UploadChapter chapter={chapterUploading} comicInfo={comicInfo} />

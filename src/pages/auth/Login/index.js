@@ -5,6 +5,7 @@ import { Fragment, useRef } from 'react';
 
 import styles from './login.module.scss';
 import Input from '@/components/common/Input';
+import DefaultButton from '@/components/common/buttons/DefaultButton';
 import { loginApi } from '@/api';
 import { forgotPasswordUrl, registerUrl } from '@/routes';
 import { required, minLength } from '@/utils';
@@ -100,11 +101,12 @@ function Login() {
             </span>
           </div>
 
-          <button
-            className="theme-primary-bg mt-4 w-full rounded-lg py-2 font-semibold"
+          <DefaultButton
+            className="!mt-4 w-full !rounded-lg font-semibold"
+            hoverColor="primary.contrastText"
             onClick={handleSubmit}>
             Sign In
-          </button>
+          </DefaultButton>
         </form>
       </div>
 

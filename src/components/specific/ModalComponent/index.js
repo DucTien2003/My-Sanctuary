@@ -2,6 +2,8 @@ import Modal from '@mui/material/Modal';
 import { useState, forwardRef, useImperativeHandle } from 'react';
 
 import { IoClose } from '@/utils';
+import DefaultButton from '@/components/common/buttons/DefaultButton';
+import AppIconButton from '@/components/common/buttons/AppIconButton';
 
 function ModalComponent(
   {
@@ -45,28 +47,27 @@ function ModalComponent(
         <div className="flex flex-col">
           <div className="theme-gray-border mb-3 flex items-center justify-between border-b border-solid pb-2">
             <h4 className="font-medium">{title}</h4>
-            <button
-              onClick={handleClose}
-              className="hover-theme-red-text hover-theme-background-10-bg rounded-full p-1 text-2xl">
+            <AppIconButton onClick={handleClose}>
               <IoClose />
-            </button>
+            </AppIconButton>
           </div>
           <div>{children}</div>
           <div className="mb-1 mt-3 flex items-center justify-end">
-            <button
-              className="theme-primary-border mr-3 rounded-md border border-solid px-3 py-2 font-medium"
+            <DefaultButton
+              className="!mr-2"
+              variant="outlined"
               onClick={handleClose}>
               {closeTitle}
-            </button>
+            </DefaultButton>
 
-            <button
-              className="theme-primary-bg rounded-md px-3 py-2 font-medium text-white"
+            <DefaultButton
+              hoverColor="primary.contrastText"
               onClick={() => {
                 handleSubmit();
                 setOpen(false);
               }}>
               {submitTitle}
-            </button>
+            </DefaultButton>
           </div>
         </div>
       </div>

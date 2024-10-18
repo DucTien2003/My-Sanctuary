@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 
 import axiosCustom from '@/api/axiosCustom';
 import ReplyItem from './ReplyItem';
+import DefaultButton from '@/components/common/buttons/DefaultButton';
 import {
   replyCommentApi,
   likeDislikeCommentApi,
@@ -197,13 +198,9 @@ function CommentItem({ comment, comicId, authInfo, isLogin }) {
               />
             </div>
             <div className="mt-1 w-full text-end">
-              <button
-                className={clsx(
-                  'theme-primary-bg rounded px-4 py-1 text-sm font-medium text-white'
-                )}
-                onClick={handleReplyComment}>
+              <DefaultButton variant="contained" onClick={handleReplyComment}>
                 Send
-              </button>
+              </DefaultButton>
             </div>
           </div>
         )}

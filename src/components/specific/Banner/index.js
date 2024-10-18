@@ -3,6 +3,7 @@ import { useRef, useEffect, useState } from 'react';
 
 import styles from './banner.module.scss';
 import Cover from '@/components/common/Cover';
+import AppIconButton from '@/components/common/buttons/AppIconButton';
 import { swiperList } from '@/api/home';
 import { FaAngleRight, FaAngleLeft } from '@/utils';
 
@@ -48,22 +49,14 @@ function Banner() {
           </span>
 
           {/* Previous button */}
-          <button
-            className="hover-theme-white-10-bg hover-theme-primary-text mr-2 flex h-10 w-10 cursor-pointer select-none items-center justify-center rounded-full"
-            onClick={prevSlide}>
-            <span>
-              <FaAngleLeft />
-            </span>
-          </button>
+          <AppIconButton onClick={prevSlide} size="large">
+            <FaAngleLeft fontSize="20" />
+          </AppIconButton>
 
           {/* Next button */}
-          <button
-            className="hover-theme-white-10-bg hover-theme-primary-text flex h-10 w-10 cursor-pointer select-none items-center justify-center rounded-full"
-            onClick={nextSlide}>
-            <span>
-              <FaAngleRight />
-            </span>
-          </button>
+          <AppIconButton onClick={nextSlide} size="large">
+            <FaAngleRight fontSize="20" />
+          </AppIconButton>
         </div>
       </div>
 

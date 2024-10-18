@@ -4,6 +4,7 @@ import { useRef, useState, useEffect, Fragment } from 'react';
 import axiosCustom from '@/api/axiosCustom';
 import Input from '@/components/common/Input';
 
+import DefaultButton from '@/components/common/buttons/DefaultButton';
 import { loginUrl } from '@/routes';
 import { resetPasswordApi } from '@/api';
 import { useAlertStore, alertActions } from '@/store';
@@ -107,11 +108,12 @@ function ResetPassword() {
             />
           </div>
 
-          <button
-            className="theme-primary-bg mt-5 w-full rounded-lg py-2 font-semibold"
+          <DefaultButton
+            className="w-full !rounded-lg font-semibold"
+            hoverColor="primary.contrastText"
             onClick={handleClickSubmit}>
             Confirm
-          </button>
+          </DefaultButton>
         </form>
       </div>
 

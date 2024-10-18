@@ -1,12 +1,13 @@
 import { useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
+import ComicInfo from './ComicInfo';
+import ChaptersInfo from './ChaptersInfo';
+import AppIconButton from '@/components/common/buttons/AppIconButton';
+
 import { useGetData } from '@/hooks';
 import { FaAngleLeft } from '@/utils';
 import { comicInfoApi, comicChaptersApi } from '@/api';
-
-import ComicInfo from './ComicInfo';
-import ChaptersInfo from './ChaptersInfo';
 
 function UploadComic() {
   const navigate = useNavigate();
@@ -35,13 +36,11 @@ function UploadComic() {
   return (
     <div className="container mb-96 mt-20">
       <div className="flex items-center">
-        <button
-          className="hover-theme-white-10-bg hover-theme-primary-text mr-1 flex h-10 w-10 cursor-pointer select-none items-center justify-center rounded-full"
-          onClick={handleBack}>
+        <AppIconButton color="black" onClick={handleBack}>
           <span>
             <FaAngleLeft className="text-xl" />
           </span>
-        </button>
+        </AppIconButton>
         <h2 className="font-medium">Comic detail</h2>
       </div>
 

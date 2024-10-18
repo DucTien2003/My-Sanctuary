@@ -5,6 +5,7 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import CommentItem from './CommentItem';
 import styles from './comment.module.scss';
 import axiosCustom from '@/api/axiosCustom';
+import DefaultButton from '@/components/common/buttons/DefaultButton';
 import PaginationComponent from '@/components/specific/PaginationComponent';
 import { isEmpty } from '@/utils';
 import { useGetData } from '@/hooks';
@@ -120,13 +121,12 @@ function Comment({ comicId }) {
             className={clsx('w-full rounded-lg bg-slate-100 p-4')}
           />
           <div className="w-full text-end">
-            <button
-              className={clsx(
-                'theme-primary-bg rounded px-6 py-2 font-medium text-white'
-              )}
+            <DefaultButton
+              variant="contained"
+              className="!px-8"
               onClick={handleComment}>
               Send
-            </button>
+            </DefaultButton>
           </div>
         </div>
       )}
