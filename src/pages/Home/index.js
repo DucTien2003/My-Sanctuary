@@ -2,8 +2,9 @@ import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
 import Banner from '@/components/specific/Banner';
-import DetailCard from '@/components/common/cards/DetailCard';
 import Swiper from '@/components/specific/Swiper';
+import DetailCard from '@/components/common/cards/DetailCard';
+import DefaultButton from '@/components/common/buttons/DefaultButton';
 import { useGetData } from '@/hooks';
 import { listComicsApi } from '@/api';
 import { comicListUrl } from '@/routes';
@@ -50,10 +51,8 @@ function Home() {
       <div className="container">
         <div className="flex items-center justify-between">
           <h2 className="font-semibold">Latest Updates</h2>
-          <Link
-            to={comicListUrl()}
-            className="theme-primary-border hover-theme-primary-text rounded-lg border px-4 py-2 font-semibold">
-            Read more
+          <Link to={comicListUrl()}>
+            <DefaultButton variant="outlined">Read more</DefaultButton>
           </Link>
         </div>
 
@@ -72,10 +71,8 @@ function Home() {
       <div className="container">
         <div className="flex items-center justify-between">
           <h2 className="font-semibold">Staff Picks</h2>
-          <Link
-            to={comicListUrl()}
-            className="theme-primary-border hover-theme-primary-text rounded-lg border px-4 py-2 font-semibold">
-            Read more
+          <Link to={comicListUrl()}>
+            <DefaultButton variant="outlined">Read more</DefaultButton>
           </Link>
         </div>
 
@@ -92,10 +89,8 @@ function Home() {
       <div className="container">
         <div className="flex items-center justify-between">
           <h2 className="font-semibold">Recently Added</h2>
-          <Link
-            to={comicListUrl()}
-            className="theme-primary-border hover-theme-primary-text rounded-lg border px-4 py-2 font-semibold">
-            Read more
+          <Link to={comicListUrl()}>
+            <DefaultButton variant="outlined">Read more</DefaultButton>
           </Link>
         </div>
 

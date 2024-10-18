@@ -1,4 +1,4 @@
-import { SHOW_ALERT, HIDE_ALERT } from './constants';
+import { SHOW_ALERT, HIDE_ALERT } from '../../constants';
 
 const alertInitialState = {
   isShow: false,

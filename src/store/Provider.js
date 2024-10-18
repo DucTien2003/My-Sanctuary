@@ -1,14 +1,17 @@
 import { useReducer } from 'react';
+import { ThemeProvider } from '@mui/material/styles';
+import { lightTheme, darkTheme } from '@/plugins/themes';
 
-import SideBarContext from './sideBar';
+import ThemeContext from './theme';
 import AlertContext from './alert';
+import SideBarContext from './sideBar';
 
 import {
   sideBarReducer,
   sideBarInitialState,
 } from './sideBar/sideBarReducer/reducer';
-
 import { alertReducer, alertInitialState } from './alert/alertReducer/reducer';
+import { themeReducer, themeInitialState } from './theme/themeReducer/reducer';
 
 function Provider({ children }) {
   // SideBar State
@@ -23,12 +26,23 @@ function Provider({ children }) {
     alertInitialState
   );
 
+  // Theme State
+  const [themeState, themeDispatch] = useReducer(
+    themeReducer,
+    themeInitialState
+  );
+
   return (
-    <SideBarContext.Provider value={[sideBarState, sideBarDispatch]}>
-      <AlertContext.Provider value={[alertState, alertDispatch]}>
-        {children}
-      </AlertContext.Provider>
-    </SideBarContext.Provider>
+    <ThemeProvider
+      theme={themeState.theme === 'light' ? lightTheme : darkTheme}>
+      <ThemeContext.Provider value={{ themeState, themeDispatch }}>
+        <SideBarContext.Provider value={[sideBarState, sideBarDispatch]}>
+          <AlertContext.Provider value={[alertState, alertDispatch]}>
+            {children}
+          </AlertContext.Provider>
+        </SideBarContext.Provider>
+      </ThemeContext.Provider>
+    </ThemeProvider>
   );
 }
 

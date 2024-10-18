@@ -2,6 +2,7 @@ import { useContext } from 'react';
 
 import SideBarContext from './sideBar';
 import AlertContext from './alert';
+import ThemeContext from './theme';
 
 export const useSideBarStore = () => {
   const [sideBarState, sideBarDispatch] = useContext(SideBarContext);
@@ -13,4 +14,10 @@ export const useAlertStore = () => {
   const [alertState, alertDispatch] = useContext(AlertContext);
 
   return [alertState, alertDispatch];
+};
+
+export const useThemeStore = () => {
+  const [themeState, themeDispatch] = useContext(ThemeContext);
+
+  return [themeState, themeDispatch];
 };
