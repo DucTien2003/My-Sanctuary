@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import axiosCustom from '@/api/axiosCustom';
 import Cover from '@/components/common/Cover';
-import ModalComponent from '@/components/specific/ModalComponent';
+import ModalComponent from '@/components/common/ModalComponent';
 import AppIconButton from '@/components/common/buttons/AppIconButton';
 import DefaultButton from '@/components/common/buttons/DefaultButton';
 import { useGetData } from '@/hooks';

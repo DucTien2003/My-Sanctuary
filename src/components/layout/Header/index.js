@@ -2,8 +2,9 @@ import clsx from 'clsx';
 import { jwtDecode } from 'jwt-decode';
 import { Link } from 'react-router-dom';
 
-import SearchInput from './SearchInput';
 import UserMenu from './UserMenu';
+import ThemeMode from './ThemeMode';
+import SearchInput from './SearchInput';
 import styles from './header.module.scss';
 import AppIconButton from '@/components/common/buttons/AppIconButton';
 import { homeUrl } from '@/routes';
@@ -44,6 +45,7 @@ function Header({ isAbsolute = false }) {
                 <MenuIcon />
               </AppIconButton>
 
+              {/* Logo */}
               <Link to={homeUrl()} className="flex items-center">
                 <img
                   src="https://mangadex.org/img/brand/mangadex-logo.svg"
@@ -58,10 +60,15 @@ function Header({ isAbsolute = false }) {
             </div>
           </div>
 
-          <div className="flex flex-1 items-center justify-end text-end">
+          {/* Search / User menu */}
+          <div className="flex flex-1 items-center justify-end gap-4 text-end">
+            {/* Search */}
             <div className="flex flex-1 justify-end">
               <SearchInput />
             </div>
+
+            {/* Theme mode */}
+            <ThemeMode />
 
             {/* User menu */}
             <UserMenu userInfo={authInfo} />

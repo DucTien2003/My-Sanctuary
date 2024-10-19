@@ -19,6 +19,7 @@ import { FaRegBell } from 'react-icons/fa';
 import { LuHistory } from 'react-icons/lu';
 import { FaRegUser } from 'react-icons/fa';
 import { FaRegStar } from 'react-icons/fa';
+import { MdDarkMode } from 'react-icons/md';
 import { FiUserPlus } from 'react-icons/fi';
 import { PiBookOpen } from 'react-icons/pi';
 import { CiSettings } from 'react-icons/ci';
@@ -26,6 +27,7 @@ import { BsPinAngle } from 'react-icons/bs';
 import { FaFacebook } from 'react-icons/fa';
 import { FiBookmark } from 'react-icons/fi';
 import { FaXTwitter } from 'react-icons/fa6';
+import { MdLightMode } from "react-icons/md";
 import { IoIosEyeOff } from 'react-icons/io';
 import { FaAngleLeft } from 'react-icons/fa6';
 import { FaArrowLeft } from 'react-icons/fa6';
@@ -62,6 +64,7 @@ export {
   LuHistory,
   FaRegUser,
   FaRegStar,
+  MdDarkMode,
   FiUserPlus,
   PiBookOpen,
   CiSettings,
@@ -69,6 +72,7 @@ export {
   FaFacebook,
   FiBookmark,
   FaXTwitter,
+  MdLightMode,
   IoIosEyeOff,
   FaAngleLeft,
   FaArrowLeft,

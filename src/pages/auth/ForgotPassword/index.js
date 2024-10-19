@@ -1,5 +1,6 @@
-import { Link, useNavigate } from 'react-router-dom';
 import { Fragment, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useForm, FormProvider } from 'react-hook-form';
 
 import axiosCustom from '@/api/axiosCustom';
 import Input from '@/components/common/Input';
@@ -12,8 +13,11 @@ function ForgotPassword() {
   const emailRef = useRef();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  // For form
+  const methods = useForm();
+  const { setError } = methods;
+
+  const onSubmit = async (e) => {
     const isEmailError = emailRef.current.checkError();
 
     if (!isEmailError) {
@@ -28,9 +32,11 @@ function ForgotPassword() {
             }
           })
           .catch((error) => {
-            console.log(error);
             if (error.response.data.unauthenticated === 'email') {
-              emailRef.current.setError(error.response.data.message);
+              setError('email', {
+                type: 'manual',
+                message: error.response.data.message || 'Email is incorrect',
+              });
             }
           });
       } catch (error) {}
@@ -44,26 +50,28 @@ function ForgotPassword() {
           Forgot your password?
         </h4>
 
-        <form>
-          <div className="mt-1">
-            <Input
-              label="Email"
-              type="email"
-              placeholder="Enter your email"
-              id="email"
-              name="Email"
-              validator={[required, requiredEmail]}
-              ref={emailRef}
-            />
-          </div>
+        <FormProvider>
+          <form onSubmit={methods.handleSubmit(onSubmit)}>
+            <div className="mt-1">
+              <Input
+                label="Email"
+                type="email"
+                placeholder="Enter your email"
+                id="email"
+                name="Email"
+                validator={[required, requiredEmail]}
+                ref={emailRef}
+              />
+            </div>
 
-          <DefaultButton
-            className="w-full !rounded-lg font-semibold"
-            hoverColor="primary.contrastText"
-            onClick={handleSubmit}>
-            Submit
-          </DefaultButton>
-        </form>
+            <DefaultButton
+              type="submit"
+              className="w-full !rounded-lg font-semibold"
+              hoverColor="primary.contrastText">
+              Submit
+            </DefaultButton>
+          </form>
+        </FormProvider>
       </div>
 
       <div className="flex justify-center py-4">

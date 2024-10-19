@@ -5,7 +5,7 @@ import axiosCustom from '@/api/axiosCustom';
 import UploadBox from '@/components/specific/UploadBox';
 import SelectInput from '@/components/common/SelectInput';
 import TextFieldInput from '@/components/common/TextFieldInput';
-import ModalComponent from '@/components/specific/ModalComponent';
+import ModalComponent from '@/components/common/ModalComponent';
 import GenresSelector from '@/components/specific/GenresSelector';
 import DefaultButton from '@/components/common/buttons/DefaultButton';
 import { createComicApi, comicInfoApi } from '@/api';

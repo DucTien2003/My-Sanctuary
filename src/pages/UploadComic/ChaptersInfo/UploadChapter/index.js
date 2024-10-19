@@ -3,7 +3,7 @@ import { useState, useRef, useMemo, useEffect, Fragment } from 'react';
 import axiosCustom from '@/api/axiosCustom';
 import UploadBox from '@/components/specific/UploadBox';
 import TextFieldInput from '@/components/common/TextFieldInput';
-import ModalComponent from '@/components/specific/ModalComponent';
+import ModalComponent from '@/components/common/ModalComponent';
 import DefaultButton from '@/components/common/buttons/DefaultButton';
 import { useGetData } from '@/hooks/useGetData';
 import { requiredAcceptSpace, convertImageToFile } from '@/utils';

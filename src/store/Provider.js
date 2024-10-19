@@ -37,7 +37,7 @@ function Provider({ children }) {
     <ThemeProvider
       theme={themeState.theme === 'light' ? lightTheme : darkTheme}>
       <CssBaseline />
-      <ThemeContext.Provider value={{ themeState, themeDispatch }}>
+      <ThemeContext.Provider value={[themeState, themeDispatch]}>
         <SideBarContext.Provider value={[sideBarState, sideBarDispatch]}>
           <AlertContext.Provider value={[alertState, alertDispatch]}>
             {children}

@@ -49,7 +49,7 @@ function UserMenu({ userInfo }) {
               : require('@/assets/images/user-avatar-1.png')
           }
           alt="user avatar"
-          className="theme-white-10-bg ml-4 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full"
+          className="theme-white-10-bg flex h-10 w-10 cursor-pointer items-center justify-center rounded-full"
         />
       </span>
 

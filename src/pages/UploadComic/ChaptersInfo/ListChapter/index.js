@@ -2,7 +2,7 @@ import { Fragment, useState, useRef } from 'react';
 
 import axiosCustom from '@/api/axiosCustom';
 import { chapterInfoApi } from '@/api';
-import ModalComponent from '@/components/specific/ModalComponent';
+import ModalComponent from '@/components/common/ModalComponent';
 import {
   reverseArray,
   timeStandard,

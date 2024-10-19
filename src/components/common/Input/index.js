@@ -45,10 +45,12 @@ function Input(
 
   return (
     <div className="flex flex-col">
-      <label htmlFor={id} className="mb-1">
-        <span>{label}</span>
-        {require && <span className="ml-1 text-red-500">*</span>}
-      </label>
+      <div>
+        <label htmlFor={id}>
+          <span>{label}</span>
+          {require && <span className="ml-1 text-red-500">*</span>}
+        </label>
+      </div>
       <span className="relative">
         <input
           className={clsx(

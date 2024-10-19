@@ -1,52 +1,56 @@
 import clsx from 'clsx';
 import axiosCustom from '@/api/axiosCustom';
+import { Fragment } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Fragment, useRef } from 'react';
+import { useForm, FormProvider } from 'react-hook-form';
 
 import styles from './login.module.scss';
-import Input from '@/components/common/Input';
+import AppInput from '@/components/common/AppInput';
 import DefaultButton from '@/components/common/buttons/DefaultButton';
+
 import { loginApi } from '@/api';
 import { forgotPasswordUrl, registerUrl } from '@/routes';
 import { required, minLength } from '@/utils';
 import { useAlertStore, alertActions } from '@/store';
 
 function Login() {
-  const usernameRef = useRef();
-  const passwordRef = useRef();
+  // Provider
   const navigate = useNavigate();
-
   const [, alertDispatch] = useAlertStore();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const isUsernameError = usernameRef.current.checkError();
-    const isPasswordError = passwordRef.current.checkError();
+  // For form
+  const methods = useForm();
+  const { setError } = methods;
 
-    if (!isUsernameError && !isPasswordError) {
-      await axiosCustom()
-        .post(loginApi(), {
-          username: usernameRef.current.getValue(),
-          password: passwordRef.current.getValue(),
-        })
-        .then((res) => {
-          if (res.status === 200) {
-            localStorage.setItem('token', res.data.token);
-            navigate('/');
+  const onSubmit = async (data) => {
+    await axiosCustom()
+      .post(loginApi(), {
+        username: data.username,
+        password: data.password,
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          localStorage.setItem('token', res.data.token);
+          navigate('/');
 
-            alertDispatch(
-              alertActions.showAlert('Login successfully!', 'success')
-            );
-          }
-        })
-        .catch((error) => {
-          if (error.response.data.unauthenticated === 'username') {
-            usernameRef.current.setError(error.response.data.message);
-          } else if (error.response.data.unauthenticated === 'password') {
-            passwordRef.current.setError(error.response.data.message);
-          }
-        });
-    }
+          alertDispatch(
+            alertActions.showAlert('Login successfully!', 'success')
+          );
+        }
+      })
+      .catch((error) => {
+        if (error.response.data.unauthenticated === 'username') {
+          setError('username', {
+            type: 'manual',
+            message: error.response.data.message || 'Username is incorrect',
+          });
+        } else if (error.response.data.unauthenticated === 'password') {
+          setError('password', {
+            type: 'manual',
+            message: error.response.data.message || 'Password is incorrect',
+          });
+        }
+      });
   };
 
   return (
@@ -56,58 +60,66 @@ function Login() {
           Sign in to your account
         </h4>
 
-        <form>
-          <div className="mt-1">
-            <Input
-              label="Username or email"
-              type="text"
-              placeholder="Enter your account"
-              id="username"
-              name="Username or Email"
-              validator={[required, minLength(5)]}
-              ref={usernameRef}
-            />
-          </div>
-
-          <div className="mt-1">
-            <Input
-              label="Password"
-              type="password"
-              placeholder="Enter your password"
-              id="password"
-              name="Password"
-              validator={[required]}
-              ref={passwordRef}
-            />
-          </div>
-
-          <div className="mt-1 flex justify-between">
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                id="remember-me"
-                className={clsx(styles['remember-me'], 'cursor-pointer')}
+        <FormProvider {...methods}>
+          <form onSubmit={methods.handleSubmit(onSubmit)}>
+            {/* Username or email */}
+            <div className="mt-1">
+              <AppInput
+                label="Username or email"
+                type="text"
+                placeholder="Enter your account"
+                id="username"
+                name="Username or Email"
+                validator={[required, minLength(5)]}
               />
-              <label htmlFor="remember-me" className="mt-1 cursor-pointer pl-2">
-                Remember me
-              </label>
             </div>
-            <span>
-              <Link
-                to={forgotPasswordUrl()}
-                className="!theme-primary-text mt-1 hover:underline">
-                Forgot Password?
-              </Link>
-            </span>
-          </div>
 
-          <DefaultButton
-            className="!mt-4 w-full !rounded-lg font-semibold"
-            hoverColor="primary.contrastText"
-            onClick={handleSubmit}>
-            Sign In
-          </DefaultButton>
-        </form>
+            {/* Password */}
+            <div className="mt-1">
+              <AppInput
+                label="Password"
+                type="password"
+                placeholder="Enter your password"
+                id="password"
+                name="Password"
+                validator={[required]}
+              />
+            </div>
+
+            {/* Remember me / Forgot password */}
+            <div className="mt-1 flex justify-between">
+              {/* Remember me */}
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="remember-me"
+                  className={clsx(styles['remember-me'], 'cursor-pointer')}
+                />
+                <label
+                  htmlFor="remember-me"
+                  className="mt-1 cursor-pointer pl-2">
+                  Remember me
+                </label>
+              </div>
+
+              {/* Forgot password */}
+              <span>
+                <Link
+                  to={forgotPasswordUrl()}
+                  className="!theme-primary-text mt-1 hover:underline">
+                  Forgot Password?
+                </Link>
+              </span>
+            </div>
+
+            {/* Submit */}
+            <DefaultButton
+              type="submit"
+              className="!mt-4 w-full !rounded-lg font-semibold">
+              Sign In
+            </DefaultButton>
+          </form>
+        </FormProvider>
       </div>
 
       <div className={clsx(styles['login-footer'], 'mt-6 py-4 text-center')}>
