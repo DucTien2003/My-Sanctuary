@@ -1,13 +1,12 @@
-import clsx from 'clsx';
-import { useRef, useEffect, useState } from 'react';
+import clsx from "clsx";
+import { useRef, useEffect, useState } from "react";
 
-import styles from './banner.module.scss';
-import Cover from '@/components/common/Cover';
-import AppIconButton from '@/components/common/buttons/AppIconButton';
-import { swiperList } from '@/api/home';
-import { FaAngleRight, FaAngleLeft } from '@/utils';
+import styles from "./banner.module.scss";
+import Cover from "@/components/common/Cover";
+import AppIconButton from "@/components/common/buttons/AppIconButton";
+import { FaAngleRight, FaAngleLeft } from "@/utils";
 
-function Banner() {
+function Banner({ comics }) {
   const swiperElRef = useRef(null);
   const [currentSlide, setCurrentSlide] = useState(1);
 
@@ -26,10 +25,10 @@ function Banner() {
       setCurrentSlide(swiperInstance.realIndex + 1);
     };
 
-    swiperInstance.on('slideChange', updateCurrentSlide);
+    swiperInstance.on("slideChange", updateCurrentSlide);
 
     return () => {
-      swiperInstance.off('slideChange', updateCurrentSlide);
+      swiperInstance.off("slideChange", updateCurrentSlide);
     };
   }, []);
 
@@ -68,19 +67,19 @@ function Banner() {
         speed={500}
         autoplay-delay="2500"
         autoplay-disable-on-interaction={true}>
-        {swiperList.map((swiperItem, index) => {
+        {comics.map((swiperItem, index) => {
           return (
             <swiper-slide key={index}>
               <div
                 key={swiperItem.id}
-                className={clsx('relative flex overflow-hidden pt-24')}>
+                className={clsx("relative flex overflow-hidden pt-24")}>
                 {/* Background banner */}
                 <img
                   src={swiperItem.cover}
                   alt="cover"
                   className={clsx(
-                    styles['swiper-bg'],
-                    'absolute left-0 top-0 h-[150%] w-full select-none object-cover'
+                    styles["swiper-bg"],
+                    "absolute left-0 top-0 h-[150%] w-full select-none object-cover"
                   )}
                 />
 
@@ -99,7 +98,7 @@ function Banner() {
                         <h1 className="font-black">{swiperItem.name}</h1>
 
                         {/* Categories */}
-                        <div className="text-mini flex flex-wrap items-center py-4 font-semibold">
+                        {/* <div className="text-mini flex flex-wrap items-center py-4 font-semibold">
                           {swiperItem.categories.map((category) => (
                             <span
                               key={category}
@@ -107,13 +106,13 @@ function Banner() {
                               {category}
                             </span>
                           ))}
-                        </div>
+                        </div> */}
 
                         {/* Description */}
                         <div className="flex-1">
-                          {swiperItem.descriptions.map((desc, index) => (
-                            <p key={index}>{desc}</p>
-                          ))}
+                          <p key={index} className="limit-line-7">
+                            {swiperItem.description}
+                          </p>
                         </div>
 
                         {/* Author, Artist */}
@@ -128,8 +127,8 @@ function Banner() {
                 {/* Overlay */}
                 <div
                   className={clsx(
-                    styles['banner-overlay'],
-                    'absolute inset-0 z-10'
+                    styles["banner-overlay"],
+                    "absolute inset-0 z-10"
                   )}></div>
               </div>
             </swiper-slide>

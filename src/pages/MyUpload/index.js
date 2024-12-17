@@ -1,16 +1,16 @@
-import clsx from 'clsx';
-import { useMemo, useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import clsx from "clsx";
+import { useMemo, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
-import axiosCustom from '@/api/axiosCustom';
-import Cover from '@/components/common/Cover';
-import ModalComponent from '@/components/common/ModalComponent';
-import AppIconButton from '@/components/common/buttons/AppIconButton';
-import DefaultButton from '@/components/common/buttons/DefaultButton';
-import { useGetData } from '@/hooks';
-import { uploadComicUrl, editComicUrl } from '@/routes';
-import { useAlertStore, alertActions } from '@/store';
-import { allAuthComicsApi, comicInfoApi } from '@/api';
+import axiosRequest from "@/api/axiosRequest";
+import Cover from "@/components/common/Cover";
+import ModalComponent from "@/components/common/ModalComponent";
+import AppIconButton from "@/components/common/buttons/AppIconButton";
+import DefaultButton from "@/components/common/buttons/DefaultButton";
+import { useGetData } from "@/hooks";
+import { uploadComicUrl, editComicUrl } from "@/routes";
+import { useAlertStore, alertActions } from "@/store";
+import { usersMyComicsApi, comicsIdApi } from "@/api";
 import {
   timeStandard,
   FaRegStar,
@@ -18,7 +18,7 @@ import {
   FaAngleLeft,
   FaRegComment,
   MdOutlineRemoveRedEye,
-} from '@/utils';
+} from "@/utils";
 
 function MyUpload() {
   const navigate = useNavigate();
@@ -27,12 +27,15 @@ function MyUpload() {
   const deleteModalRef = useRef();
   const [, alertDispatch] = useAlertStore();
 
-  const allAuthComicsApiUrl = allAuthComicsApi();
   const staticApis = useMemo(
-    () => [allAuthComicsApiUrl],
-    [allAuthComicsApiUrl]
+    () => [
+      {
+        url: usersMyComicsApi(),
+        query: { orderBy: "created_at", sortType: "ASC" },
+      },
+    ],
+    []
   );
-  const staticResponse = useGetData(staticApis);
 
   const handleBack = () => {
     navigate(-1);
@@ -44,21 +47,27 @@ function MyUpload() {
   };
 
   const handleDeleteComic = async (comicId) => {
-    const comicInfoApiUrl = comicInfoApi(comicId);
     try {
-      const response = await axiosCustom().delete(comicInfoApiUrl);
-      if (response.data.success) {
+      const response = await axiosRequest(comicsIdApi(comicId), {
+        method: "DELETE",
+      });
+
+      if (response.success && response.code === 200) {
         alertDispatch(
-          alertActions.showAlert('Delete comic successfully!', 'success')
+          alertActions.showAlert("Delete comic successfully!", "success")
         );
+
+        window.location.reload();
       } else {
-        alertDispatch(alertActions.showAlert('Delete comic failed!', 'error'));
+        alertDispatch(alertActions.showAlert("Delete comic failed!", "error"));
       }
     } catch (error) {
-      console.log('Error handleDeleteComic: ', error);
-      alertDispatch(alertActions.showAlert('Delete comic failed!', 'error'));
+      console.log("Error handleDeleteComic: ", error);
+      alertDispatch(alertActions.showAlert("Delete comic failed!", "error"));
     }
   };
+
+  const staticResponse = useGetData(staticApis);
 
   if (staticResponse.loading) {
     return <h2 className="mt-16 w-full text-center">Loading...</h2>;
@@ -72,7 +81,7 @@ function MyUpload() {
     );
   }
 
-  const [listComics] = staticResponse.initialData;
+  const [{ comics: listComics }] = staticResponse.responseData;
 
   return (
     <div className="relative mb-10 mt-20">
@@ -118,27 +127,27 @@ function MyUpload() {
                       <span
                         className={clsx(
                           {
-                            'border-green-400': comic.status === 'Completed',
-                            'border-red-400': comic.status === 'Dropped',
-                            'border-yellow-400': comic.status === 'Ongoing',
+                            "border-green-400": comic.status === "Completed",
+                            "border-red-400": comic.status === "Dropped",
+                            "border-yellow-400": comic.status === "Ongoing",
                           },
-                          'ml-2 flex min-w-12 items-center justify-center rounded-md border px-3 py-2 font-medium'
+                          "ml-2 flex min-w-12 items-center justify-center rounded-md border px-3 py-2 font-medium"
                         )}>
                         <span
                           className={clsx(
                             {
-                              'bg-green-400': comic.status === 'Completed',
-                              'bg-red-400': comic.status === 'Dropped',
-                              'bg-yellow-400': comic.status === 'Ongoing',
+                              "bg-green-400": comic.status === "Completed",
+                              "bg-red-400": comic.status === "Dropped",
+                              "bg-yellow-400": comic.status === "Ongoing",
                             },
-                            'mr-1 h-2 w-2 rounded-full'
+                            "mr-1 h-2 w-2 rounded-full"
                           )}></span>
                         <span>{comic.status}</span>
                       </span>
                     </div>
 
                     {/* SubName */}
-                    <p className="text-sm">- {comic.subName} -</p>
+                    <p className="text-sm">- {comic.subname} -</p>
                   </div>
 
                   {/* Description */}
@@ -149,7 +158,7 @@ function MyUpload() {
 
                 <div className="flex justify-between">
                   <div className="text-sm text-gray-600">
-                    <p>Publish at: {timeStandard(comic.publishAt)}</p>
+                    <p>Publish at: {timeStandard(comic.createdAt)}</p>
 
                     {/* Info */}
                     <div className="flex items-center">
@@ -197,7 +206,7 @@ function MyUpload() {
         ref={deleteModalRef}>
         {selectedDeleteComic && selectedDeleteComic.name && (
           <p>
-            Are you sure you want to delete{' '}
+            Are you sure you want to delete{" "}
             <span className="font-semibold">{selectedDeleteComic.name}</span>?
           </p>
         )}

@@ -1,6 +1,6 @@
-import clsx from 'clsx';
-import { FilePond } from 'react-filepond';
-import { ReactSortable } from 'react-sortablejs';
+import clsx from "clsx";
+import { FilePond } from "react-filepond";
+import { ReactSortable } from "react-sortablejs";
 import React, {
   useRef,
   Fragment,
@@ -8,17 +8,17 @@ import React, {
   useEffect,
   forwardRef,
   useImperativeHandle,
-} from 'react';
+} from "react";
 
-import './uploadBox.scss';
-import 'filepond/dist/filepond.min.css';
+import "./uploadBox.scss";
+import "filepond/dist/filepond.min.css";
 
-import { FaPlus, MdEdit, IoClose } from '@/utils';
+import { FaPlus, MdEdit, IoClose } from "@/utils";
 
 const UploadBox = (
   {
     allowMultiple = true,
-    label = '',
+    label = "",
     isSingle = false,
     showName = true,
     initialData = [],
@@ -30,8 +30,9 @@ const UploadBox = (
   const [files, setFiles] = useState(initialData);
 
   useEffect(() => {
-    setFiles(initialData);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (initialData.length > 0) {
+      setFiles(initialData);
+    }
   }, [initialData]);
 
   const fileInputRef = useRef(null);
@@ -143,7 +144,7 @@ const UploadBox = (
               onClick={() =>
                 handleClickEditFile(
                   index,
-                  new File(['new content'], 'new-file-name.jpg')
+                  new File(["new content"], "new-file-name.jpg")
                 )
               }>
               <MdEdit className="text-lg text-white hover:text-yellow-400" />
@@ -153,9 +154,9 @@ const UploadBox = (
         {/* Upload box */}
         <div
           className={clsx(
-            { 'border-red-500': empty, 'border-gray-500': !empty },
+            { "border-red-500": empty, "border-gray-500": !empty },
             { hidden: isSingle && files.length > 0 },
-            'ignore-move relative aspect-[7/10] w-[130px] cursor-pointer rounded-md border border-dashed'
+            "ignore-move relative aspect-[7/10] w-[130px] cursor-pointer rounded-md border border-dashed"
           )}>
           <FilePond
             ref={pondRef}

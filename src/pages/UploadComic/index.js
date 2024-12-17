@@ -1,24 +1,35 @@
-import { useMemo } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useMemo } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 
-import ComicInfo from './ComicInfo';
-import ChaptersInfo from './ChaptersInfo';
-import AppIconButton from '@/components/common/buttons/AppIconButton';
+import ComicInfo from "./ComicInfo";
+import ChaptersInfo from "./ChaptersInfo";
+import AppIconButton from "@/components/common/buttons/AppIconButton";
 
-import { useGetData } from '@/hooks';
-import { FaAngleLeft } from '@/utils';
-import { comicInfoApi, comicChaptersApi } from '@/api';
+import { useGetData } from "@/hooks";
+import { FaAngleLeft } from "@/utils";
+import { comicsIdApi, comicsIdChaptersApi } from "@/api";
 
 function UploadComic() {
   const navigate = useNavigate();
   const { comicId } = useParams();
 
-  const comicInfoApiUrl = comicInfoApi(comicId);
-  const comicChaptersApiUrl = comicChaptersApi(comicId);
   const staticApis = useMemo(
-    () => (comicId ? [comicInfoApiUrl, comicChaptersApiUrl] : []),
-    [comicId, comicInfoApiUrl, comicChaptersApiUrl]
+    () =>
+      comicId
+        ? [
+            {
+              url: comicsIdApi(comicId),
+              query: { orderBy: "created_at", sortType: "ASC" },
+            },
+            {
+              url: comicsIdChaptersApi(comicId),
+              query: { orderBy: "number_order", sortType: "ASC" },
+            },
+          ]
+        : [],
+    [comicId]
   );
+
   const staticResponse = useGetData(staticApis);
 
   const handleBack = () => {
@@ -29,8 +40,8 @@ function UploadComic() {
     return <h2 className="mt-16 w-full text-center">Loading...</h2>;
   }
 
-  const [comicInfo, listChapters] = comicId
-    ? staticResponse.initialData
+  const [{ comic: comicInfo }, { chapters: listChapters }] = comicId
+    ? staticResponse.responseData
     : [{}, []];
 
   return (
@@ -44,8 +55,10 @@ function UploadComic() {
         <h2 className="font-medium">Comic detail</h2>
       </div>
 
+      {/* Comic info */}
       <ComicInfo comicId={comicId} comicInfo={comicInfo} />
 
+      {/* Chapter */}
       {comicId && (
         <ChaptersInfo comicInfo={comicInfo} listChapters={listChapters} />
       )}

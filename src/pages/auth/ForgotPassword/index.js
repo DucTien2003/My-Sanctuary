@@ -1,46 +1,51 @@
-import { Fragment, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useForm, FormProvider } from 'react-hook-form';
+import { Fragment } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useForm, FormProvider } from "react-hook-form";
 
-import axiosCustom from '@/api/axiosCustom';
-import Input from '@/components/common/Input';
-import DefaultButton from '@/components/common/buttons/DefaultButton';
-import { forgotPasswordApi } from '@/api';
-import { loginUrl } from '@/routes';
-import { FaAnglesLeft, required, requiredEmail } from '@/utils';
+import axiosCustom from "@/api/axiosRequest";
+import AppInput from "@/components/common/AppInput";
+import DefaultButton from "@/components/common/buttons/DefaultButton";
+import { loginUrl } from "@/routes";
+import { forgotPasswordApi } from "@/api";
+import { useAlertStore, alertActions } from "@/store";
+import { FaAnglesLeft, required, requiredEmail } from "@/utils";
 
 function ForgotPassword() {
-  const emailRef = useRef();
   const navigate = useNavigate();
+  const [, alertDispatch] = useAlertStore();
 
   // For form
   const methods = useForm();
   const { setError } = methods;
 
-  const onSubmit = async (e) => {
-    const isEmailError = emailRef.current.checkError();
+  const onSubmit = async (data) => {
+    await axiosCustom()
+      .post(forgotPasswordApi(), {
+        email: data.email,
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          navigate("/reset-password");
+        }
+      })
+      .catch((error) => {
+        if (error.response.status === 500) {
+          alertDispatch(
+            alertActions.showAlert(error.response.data.message, "error")
+          );
+          return;
+        }
 
-    if (!isEmailError) {
-      try {
-        await axiosCustom()
-          .post(forgotPasswordApi(), {
-            email: emailRef.current.getValue(),
-          })
-          .then((res) => {
-            if (res.status === 200) {
-              navigate('/reset-password');
-            }
-          })
-          .catch((error) => {
-            if (error.response.data.unauthenticated === 'email') {
-              setError('email', {
-                type: 'manual',
-                message: error.response.data.message || 'Email is incorrect',
-              });
-            }
+        const errorData = error.response.data.data;
+        if (errorData.errors.length > 0) {
+          errorData.errors.forEach((err) => {
+            setError(err.field, {
+              type: "manual",
+              message: err.message,
+            });
           });
-      } catch (error) {}
-    }
+        }
+      });
   };
 
   return (
@@ -50,17 +55,16 @@ function ForgotPassword() {
           Forgot your password?
         </h4>
 
-        <FormProvider>
+        <FormProvider {...methods}>
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             <div className="mt-1">
-              <Input
+              <AppInput
                 label="Email"
                 type="email"
                 placeholder="Enter your email"
                 id="email"
                 name="Email"
                 validator={[required, requiredEmail]}
-                ref={emailRef}
               />
             </div>
 

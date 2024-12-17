@@ -1,24 +1,22 @@
-import { useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { useMemo } from "react";
+import { Link } from "react-router-dom";
 
-import Banner from '@/components/specific/Banner';
-import Swiper from '@/components/specific/Swiper';
-import DetailCard from '@/components/common/cards/DetailCard';
-import DefaultButton from '@/components/common/buttons/DefaultButton';
-import { useGetData } from '@/hooks';
-import { listComicsApi } from '@/api';
-import { comicListUrl } from '@/routes';
+import Banner from "@/components/specific/Banner";
+import Swiper from "@/components/specific/Swiper";
+import DetailCard from "@/components/common/cards/DetailCard";
+import DefaultButton from "@/components/common/buttons/DefaultButton";
+import { comicsApi } from "@/api";
+import { useGetData } from "@/hooks";
+import { comicListUrl } from "@/routes";
 
 function Home() {
-  const latestUpdateApiUrl = listComicsApi({ limit: 18, orderBy: 'update_at' });
-  const recentlyAddedApiUrl = listComicsApi({
-    limit: 18,
-    orderBy: 'publish_at',
-  });
-
   const staticApis = useMemo(
-    () => [latestUpdateApiUrl, recentlyAddedApiUrl],
-    [latestUpdateApiUrl, recentlyAddedApiUrl]
+    () => [
+      { url: comicsApi(), query: { limit: 5, orderBy: "views" } },
+      { url: comicsApi(), query: { limit: 18, orderBy: "created_at" } },
+      { url: comicsApi(), query: { limit: 18, orderBy: "created_at" } },
+    ],
+    []
   );
 
   const staticResponse = useGetData(staticApis);
@@ -35,16 +33,14 @@ function Home() {
     );
   }
 
-  const [latestUpdateComics, recentlyAddedComics] =
-    staticResponse.initialData || [];
-
-  console.log(staticResponse.initialData);
+  const [mostPopularComics, latestUpdateComics, recentlyAddedComics] =
+    staticResponse.responseData || [];
 
   return (
     <div>
       {/* Banner */}
       <div className="pb-8">
-        <Banner />
+        <Banner comics={mostPopularComics.comics} />
       </div>
 
       {/* Latest updates */}
@@ -57,7 +53,7 @@ function Home() {
         </div>
 
         <div className="mt-5 grid grid-cols-6 gap-5 pb-12">
-          {latestUpdateComics.map((comic, index) => {
+          {latestUpdateComics.comics.map((comic, index) => {
             return (
               <div key={index} className="w-full">
                 <DetailCard comic={comic} />
@@ -78,7 +74,7 @@ function Home() {
 
         <div className="mt-5">
           <Swiper
-            comicList={recentlyAddedComics}
+            comicList={recentlyAddedComics.comics}
             numberOfSlides={5}
             cardType="description"
           />
@@ -96,7 +92,7 @@ function Home() {
 
         <div className="mt-5">
           <Swiper
-            comicList={recentlyAddedComics}
+            comicList={recentlyAddedComics.comics}
             numberOfSlides={6}
             gap={20}
             cardType="monotonic"

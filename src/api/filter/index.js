@@ -1,1 +1,1 @@
-export { genres } from './genres';
+export { genres } from "./genres";

@@ -1,5 +1,5 @@
-import TextField from '@mui/material/TextField';
-import { useState, forwardRef, useImperativeHandle } from 'react';
+import TextField from "@mui/material/TextField";
+import { useState, forwardRef, useImperativeHandle } from "react";
 
 function TextFieldInput(
   {
@@ -7,18 +7,18 @@ function TextFieldInput(
     name,
     label,
     rows = 1,
-    type = 'text',
+    type = "text",
     validate = [],
-    size = 'normal',
-    initialData = '',
+    size = "normal",
+    initialData = "",
     required = false,
     multiline = false,
-    variant = 'outlined',
+    variant = "outlined",
   },
   ref
 ) {
   const [value, setValue] = useState(initialData);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
 
   useImperativeHandle(ref, () => ({
     checkError() {
@@ -28,7 +28,7 @@ function TextFieldInput(
           setErrorMessage(error);
           return true;
         } else {
-          setErrorMessage('');
+          setErrorMessage("");
         }
       }
 
@@ -63,7 +63,7 @@ function TextFieldInput(
       size={size}
       value={value}
       type={type}
-      label={required ? label + '*' : label}
+      label={required ? label + "*" : label}
       variant={variant}
       multiline={multiline}
       onChange={handleChange}

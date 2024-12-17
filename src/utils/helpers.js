@@ -1,21 +1,21 @@
-import axios from 'axios';
-import { Fragment } from 'react';
-import { format } from 'date-fns';
+import axios from "axios";
+import { Fragment } from "react";
+import { format } from "date-fns";
 
 const extend = Object.assign;
 
 // Add zero
 const addZero = (number) => {
-  return number < 10 ? '0' + number : number;
+  return number < 10 ? "0" + number : number;
 };
 
 const isEmpty = (value) => {
   return (
     value === null || // check for null
     value === undefined || // check for undefined
-    value === '' || // check for empty string
+    value === "" || // check for empty string
     (Array.isArray(value) && value.length === 0) || // check for empty array
-    (typeof value === 'object' && Object.keys(value).length === 0) // check for empty object
+    (typeof value === "object" && Object.keys(value).length === 0) // check for empty object
   );
 };
 
@@ -53,42 +53,42 @@ const timeAgo = (timestamp) => {
 };
 
 const timeStandard = (timestamp) => {
-  return format(new Date(timestamp), 'dd/MM/yyyy');
+  return format(new Date(timestamp), "dd/MM/yyyy");
 };
 
 const showQuantity = (number) => {
-  return number >= 1000 ? (number / 1000).toFixed(1) + 'k' : number;
+  return number >= 1000 ? (number / 1000).toFixed(1) + "k" : number;
 };
 
 // Reformat path
 const formatPath = (path) => {
   return path
-    .replace(/[^a-zA-Z0-9-]+/g, '-')
-    .replace(/^-+|-+$/g, '')
+    .replace(/[^a-zA-Z0-9-]+/g, "-")
+    .replace(/^-+|-+$/g, "")
     .toLowerCase();
 };
 
 // Remove slash at the end of string
 const removeEndSlash = (str) => {
-  return str.replace(/\/+$/, '');
+  return str.replace(/\/+$/, "");
 };
 
 // Sort by last number of string
 const sortByLastNumber = (arr, ascending = false) => {
   return arr.sort((a, b) => {
     // Split the string by spaces and get the last element
-    const numA = parseFloat(a.split(' ').pop());
-    const numB = parseFloat(b.split(' ').pop());
+    const numA = parseFloat(a.split(" ").pop());
+    const numB = parseFloat(b.split(" ").pop());
 
     return ascending ? numB - numA : numA - numB;
   });
 };
 
 const convertImageToFile = async (imageUrl) => {
-  const response = await axios.get(imageUrl, { responseType: 'blob' });
+  const response = await axios.get(imageUrl, { responseType: "blob" });
   const blob = response.data;
 
-  const urlParts = imageUrl.split('/');
+  const urlParts = imageUrl.split("/");
   const filename = urlParts[urlParts.length - 1];
 
   const mimeType = blob.type;
@@ -102,12 +102,25 @@ const reverseArray = (arr) => {
 };
 
 const breakLine = (str) => {
-  return str.split('\n').map((item, index) => (
+  return str.split("\n").map((item, index) => (
     <Fragment key={index}>
       {item}
       <br />
     </Fragment>
   ));
+};
+
+const capitalizeFirstLetter = (string) => {
+  if (!string) return "";
+  return string.charAt(0).toUpperCase() + string.slice(1);
+};
+
+const capitalizeWords = (string) => {
+  if (!string) return "";
+  return string
+    .split(" ")
+    .map((word) => capitalizeFirstLetter(word))
+    .join(" ");
 };
 
 export {
@@ -123,4 +136,6 @@ export {
   removeEndSlash,
   sortByLastNumber,
   convertImageToFile,
+  capitalizeFirstLetter,
+  capitalizeWords,
 };

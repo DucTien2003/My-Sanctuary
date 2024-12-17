@@ -1,106 +1,152 @@
-import { useState, useRef, useMemo, useEffect, Fragment } from 'react';
+import { useState, useRef, useMemo, useEffect } from "react";
 
-import axiosCustom from '@/api/axiosCustom';
-import UploadBox from '@/components/specific/UploadBox';
-import TextFieldInput from '@/components/common/TextFieldInput';
-import ModalComponent from '@/components/common/ModalComponent';
-import DefaultButton from '@/components/common/buttons/DefaultButton';
-import { useGetData } from '@/hooks/useGetData';
-import { requiredAcceptSpace, convertImageToFile } from '@/utils';
-import { createChapterApi, chapterInfoApi, chapterImagesApi } from '@/api';
+import axiosRequest from "@/api/axiosRequest";
+import UploadBox from "@/components/specific/UploadBox";
+import AppTextFieldInput from "@/components/common/AppTextFieldInput";
+import ModalComponent from "@/components/common/ModalComponent";
+import DefaultButton from "@/components/common/buttons/DefaultButton";
+import { useGetData } from "@/hooks/useGetData";
+import { useAlertStore, alertActions } from "@/store";
+import { useForm, FormProvider } from "react-hook-form";
+import { requiredAcceptSpace, convertImageToFile } from "@/utils";
+import { chaptersApi, chaptersIdApi, chaptersIdImagesApi } from "@/api";
 
-function UploadChapter({ chapter = {}, comicInfo = {} }) {
-  const indexRef = useRef();
+function UploadChapter({
+  chapter = {},
+  comicInfo = {},
+  handleBackOrUploadNewChapter = () => {},
+}) {
+  const [, alertDispatch] = useAlertStore();
+
+  // Refs
   const imagesRef = useRef();
-  const chapterNameRef = useRef();
   const resetModalRef = useRef();
   const createModalRef = useRef();
 
+  // For form
+  const [formControllerData, setFormControllerData] = useState(comicInfo);
+  const methods = useForm();
+  const { setError } = methods;
+
   const [imageFiles, setImageFiles] = useState([]);
 
-  const chapterImagesApiUrl = chapterImagesApi(chapter.id);
   const staticApis = useMemo(
-    () => (chapter.id ? [chapterImagesApiUrl] : []),
-    [chapter.id, chapterImagesApiUrl]
+    () => [
+      {
+        url: chaptersIdImagesApi(chapter.id),
+        query: { orderBy: "number_order", sortType: "ASC" },
+      },
+    ],
+    [chapter.id]
   );
 
   const staticResponse = useGetData(staticApis);
-  const [imagesChapter] = chapter.id ? staticResponse.initialData : [[]];
 
   useEffect(() => {
-    const fetchImageFile = async () => {
-      if (imagesChapter && imagesChapter.length > 0) {
-        const imageFilePromises = imagesChapter.map(async (image) => {
-          return await convertImageToFile(image.url);
-        });
+    if (staticResponse.responseData.length > 0) {
+      const [{ images: imagesChapter }] = chapter.id
+        ? staticResponse.responseData
+        : [{ images: [] }];
 
-        const imageFilesResult = await Promise.all(imageFilePromises);
+      const fetchImageFile = async () => {
+        if (imagesChapter && imagesChapter.length > 0) {
+          const imageFilePromises = imagesChapter.map(async (image) => {
+            return await convertImageToFile(image.url);
+          });
 
-        setImageFiles(imageFilesResult);
-      }
-    };
+          const imageFilesResult = await Promise.all(imageFilePromises);
 
-    fetchImageFile();
-  }, [imagesChapter]);
+          setImageFiles(imageFilesResult);
+        }
+      };
+
+      fetchImageFile();
+    }
+  }, [staticResponse.responseData, chapter.id]);
 
   const handleReset = () => {
-    indexRef.current.resetValue();
+    methods.reset();
     imagesRef.current.resetFiles();
-    chapterNameRef.current.resetValue();
   };
 
-  const handleClickCreate = () => {
+  const onSubmit = (data) => {
+    // Check if images is empty
+    const isEmptyImages = imagesRef.current.checkEmpty();
+
+    if (isEmptyImages) {
+      return null;
+    }
+
+    // Open modal
+    setFormControllerData(data);
     createModalRef.current.openModal();
   };
 
   const handleConfirm = async () => {
-    const isErrorIndex = indexRef.current.checkError();
-    const isEmptyImages = imagesRef.current.checkEmpty();
-    const isErrorChapterName = chapterNameRef.current.checkError();
-
-    if (isErrorIndex || isEmptyImages || isErrorChapterName) {
-      return null;
-    }
-
-    const index = indexRef.current.getValue();
     const images = imagesRef.current.getFiles();
-    const chapterName = chapterNameRef.current.getValue();
+
+    const chapterData = {
+      name: formControllerData.chapterName,
+      numberOrder: Number(formControllerData.numberOrder),
+      oldNumberOrder: chapter.id ? chapter.numberOrder : null,
+    };
 
     const formData = new FormData();
-    formData.append('index', Number(index));
-    formData.append('name', chapterName);
-    formData.append('comicInfo', JSON.stringify(comicInfo));
-    formData.append('oldIndex', chapter.id ? chapter.index : null);
-    images.map((image) => formData.append('images', image));
+    formData.append("chapterData", JSON.stringify(chapterData));
+    formData.append("comicInfo", JSON.stringify(comicInfo));
+    images.map((image) => formData.append("images", image));
 
-    const createChapterApiUrl = createChapterApi();
-    const updateChapterApiUrl = chapterInfoApi(chapter.id);
     const response = chapter.id
-      ? await axiosCustom().put(updateChapterApiUrl, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
+      ? await axiosRequest(chaptersIdApi(chapter.id), {
+          method: "PUT",
+          body: formData,
+          headers: { "Content-Type": "multipart/form-data" },
         })
-      : await axiosCustom().post(createChapterApiUrl, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
+      : await axiosRequest(chaptersApi(), {
+          method: "POST",
+          body: formData,
+          headers: { "Content-Type": "multipart/form-data" },
         });
 
-    if (response.data.success) {
-      console.log('Success');
-    } else {
-      console.log('Failed');
+    if (!response.success && response.data.errors.length > 0) {
+      response.data.errors.forEach((err) => {
+        setError(err.field, {
+          type: "manual",
+          message: err.message,
+        });
+      });
+
+      return;
     }
+
+    if (response.success && response.code === 200) {
+      alertDispatch(
+        alertActions.showAlert(
+          chapter.id
+            ? "Update chapter info successfully!"
+            : "Create chapter info successfully!",
+          "success"
+        )
+      );
+    } else {
+      alertDispatch(
+        alertActions.showAlert(
+          chapter.id
+            ? "Update chapter info failed!"
+            : "Create chapter info failed!",
+          "error"
+        )
+      );
+    }
+
+    handleBackOrUploadNewChapter();
   };
 
-  if (staticResponse.loading) {
-    return <h2 className="mt-16 w-full text-center">Loading...</h2>;
-  }
-
   return (
-    <Fragment>
-      <div className="container my-20">
+    <FormProvider {...methods}>
+      <form
+        onSubmit={methods.handleSubmit(onSubmit)}
+        className="container my-20">
         <h2 className="mb-8 mt-14 font-medium">Chapter info</h2>
 
         <div className="mb-6 flex items-center justify-end">
@@ -113,40 +159,38 @@ function UploadChapter({ chapter = {}, comicInfo = {} }) {
 
           <DefaultButton
             className="h-12 !rounded-md !px-10 text-lg !font-medium"
-            onClick={handleClickCreate}>
-            {chapter.id ? 'Update' : 'Create'}
+            type="submit">
+            {chapter.id ? "Update" : "Create"}
           </DefaultButton>
         </div>
 
         <div className="flex gap-2">
-          <div className="w-[200px]">
-            <TextFieldInput
-              id="index"
-              name="Index"
-              label="Index"
+          <div className="w-1/4 min-w-[200px]">
+            <AppTextFieldInput
+              id="numberOrder"
+              name="NO"
+              label="NO"
               type="number"
               min={1}
               required={true}
-              initialData={chapter.index || ''}
+              defaultValue={chapter.numberOrder || ""}
               validate={[requiredAcceptSpace]}
-              ref={indexRef}
             />
           </div>
 
-          <TextFieldInput
-            id="chapter-name"
+          <AppTextFieldInput
+            id="chapterName"
             name="Chapter name"
             label="Chapter name"
             required={true}
-            initialData={chapter.name || ''}
+            defaultValue={chapter.name || ""}
             validate={[requiredAcceptSpace]}
-            ref={chapterNameRef}
           />
         </div>
 
         <h2 className="mb-8 mt-14 font-medium">Images of chapter</h2>
         <UploadBox initialData={imageFiles} ref={imagesRef} />
-      </div>
+      </form>
 
       <ModalComponent
         title="Reset chapter info"
@@ -171,11 +215,11 @@ function UploadChapter({ chapter = {}, comicInfo = {} }) {
         </p>
         <p className="mt-1">
           {chapter.id
-            ? 'Your changes will be saved.'
-            : 'The info will be saved.'}
+            ? "Your changes will be saved."
+            : "The info will be saved."}
         </p>
       </ModalComponent>
-    </Fragment>
+    </FormProvider>
   );
 }
 

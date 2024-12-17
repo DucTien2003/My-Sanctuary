@@ -1,56 +1,65 @@
-import clsx from 'clsx';
-import axiosCustom from '@/api/axiosCustom';
-import { Fragment } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useForm, FormProvider } from 'react-hook-form';
+import clsx from "clsx";
+import axiosRequest from "@/api/axiosRequest";
+import { Fragment } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useForm, FormProvider } from "react-hook-form";
 
-import styles from './login.module.scss';
-import AppInput from '@/components/common/AppInput';
-import DefaultButton from '@/components/common/buttons/DefaultButton';
+import AppInput from "@/components/common/AppInput";
+import DefaultButton from "@/components/common/buttons/DefaultButton";
 
-import { loginApi } from '@/api';
-import { forgotPasswordUrl, registerUrl } from '@/routes';
-import { required, minLength } from '@/utils';
-import { useAlertStore, alertActions } from '@/store';
+import { loginApi } from "@/api";
+import { forgotPasswordUrl, registerUrl } from "@/routes";
+import { required, minLength } from "@/utils";
+import {
+  useAlertStore,
+  alertActions,
+  useAuthStore,
+  authActions,
+} from "@/store";
 
 function Login() {
-  // Provider
   const navigate = useNavigate();
+
+  // Provider
   const [, alertDispatch] = useAlertStore();
+  const [, authDispatch] = useAuthStore();
 
   // For form
   const methods = useForm();
   const { setError } = methods;
 
   const onSubmit = async (data) => {
-    await axiosCustom()
-      .post(loginApi(), {
-        username: data.username,
-        password: data.password,
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          localStorage.setItem('token', res.data.token);
-          navigate('/');
+    const response = await axiosRequest(loginApi(), {
+      method: "post",
+      body: { username: data.username, password: data.password },
+    });
 
-          alertDispatch(
-            alertActions.showAlert('Login successfully!', 'success')
-          );
-        }
-      })
-      .catch((error) => {
-        if (error.response.data.unauthenticated === 'username') {
-          setError('username', {
-            type: 'manual',
-            message: error.response.data.message || 'Username is incorrect',
+    const responseData = response.data;
+
+    if (response.code === 200 && response.success) {
+      authDispatch(authActions.login(responseData));
+
+      // Save tokens to local storage
+      localStorage.setItem("accessToken", responseData.accessToken);
+      localStorage.setItem("refreshToken", responseData.refreshToken);
+      navigate("/");
+
+      alertDispatch(alertActions.showAlert(response.message, "success"));
+    } else {
+      if (response.code === 500) {
+        alertDispatch(alertActions.showAlert(response.message, "error"));
+        return;
+      }
+
+      if (responseData.errors.length > 0) {
+        responseData.errors.forEach((err) => {
+          setError(err.field, {
+            type: "manual",
+            message: err.message,
           });
-        } else if (error.response.data.unauthenticated === 'password') {
-          setError('password', {
-            type: 'manual',
-            message: error.response.data.message || 'Password is incorrect',
-          });
-        }
-      });
+        });
+      }
+    }
   };
 
   return (
@@ -65,23 +74,23 @@ function Login() {
             {/* Username or email */}
             <div className="mt-1">
               <AppInput
-                label="Username or email"
-                type="text"
-                placeholder="Enter your account"
                 id="username"
+                type="text"
                 name="Username or Email"
-                validator={[required, minLength(5)]}
+                label="Username or email"
+                placeholder="Enter your account"
+                validator={[required, minLength(6)]}
               />
             </div>
 
             {/* Password */}
             <div className="mt-1">
               <AppInput
-                label="Password"
-                type="password"
-                placeholder="Enter your password"
                 id="password"
+                type="password"
                 name="Password"
+                label="Password"
+                placeholder="Enter your password"
                 validator={[required]}
               />
             </div>
@@ -91,9 +100,9 @@ function Login() {
               {/* Remember me */}
               <div className="flex items-center">
                 <input
-                  type="checkbox"
                   id="remember-me"
-                  className={clsx(styles['remember-me'], 'cursor-pointer')}
+                  type="checkbox"
+                  className={"cursor-pointer"}
                 />
                 <label
                   htmlFor="remember-me"
@@ -122,7 +131,7 @@ function Login() {
         </FormProvider>
       </div>
 
-      <div className={clsx(styles['login-footer'], 'mt-6 py-4 text-center')}>
+      <div className={clsx("mt-6 bg-gray-800 py-4 text-center text-gray-300")}>
         <span>New user?</span>
         <Link
           to={registerUrl()}

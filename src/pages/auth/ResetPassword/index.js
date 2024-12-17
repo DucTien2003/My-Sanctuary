@@ -1,15 +1,15 @@
-import { Fragment } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useForm, FormProvider } from 'react-hook-form';
+import { Fragment } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useForm, FormProvider } from "react-hook-form";
 
-import axiosCustom from '@/api/axiosCustom';
-import AppInput from '@/components/common/AppInput';
+import axiosRequest from "@/api/axiosRequest";
+import AppInput from "@/components/common/AppInput";
 
-import DefaultButton from '@/components/common/buttons/DefaultButton';
-import { loginUrl } from '@/routes';
-import { resetPasswordApi } from '@/api';
-import { useAlertStore, alertActions } from '@/store';
-import { FaAnglesLeft, required, minLength } from '@/utils';
+import DefaultButton from "@/components/common/buttons/DefaultButton";
+import { loginUrl } from "@/routes";
+import { resetPasswordApi } from "@/api";
+import { useAlertStore, alertActions } from "@/store";
+import { FaAnglesLeft, required, minLength } from "@/utils";
 
 function ResetPassword() {
   // For form
@@ -20,29 +20,34 @@ function ResetPassword() {
   const [, alertDispatch] = useAlertStore();
 
   const onSubmit = async (data) => {
-    await axiosCustom()
-      .post(resetPasswordApi(), {
+    const response = await axiosRequest(resetPasswordApi(), {
+      method: "post",
+      body: {
         verificationCode: data.verificationCode,
         password: data.password,
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          navigate('/login');
+      },
+    });
 
-          alertDispatch(
-            alertActions.showAlert('Reset password successfully!', 'success')
-          );
-        }
-      })
-      .catch((error) => {
-        if (error.response.data.unauthenticated === 'code') {
-          setError('verificationCode', {
-            type: 'manual',
-            message:
-              error.response.data.message || 'Verification code is incorrect',
+    if (response.code === 200 && response.success) {
+      navigate("/login");
+
+      alertDispatch(alertActions.showAlert(response.message, "success"));
+    } else {
+      if (response.code === 500) {
+        alertDispatch(alertActions.showAlert(response.message, "error"));
+        return;
+      }
+
+      const errorData = response.data;
+      if (errorData.errors.length > 0) {
+        errorData.errors.forEach((err) => {
+          setError(err.field, {
+            type: "manual",
+            message: err.message,
           });
-        }
-      });
+        });
+      }
+    }
   };
 
   return (

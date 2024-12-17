@@ -1,28 +1,38 @@
-import axiosCustom from '@/api/axiosCustom';
-import { useState, useEffect } from 'react';
+import axiosRequest from "@/api/axiosRequest";
+import { useState, useEffect } from "react";
 
 export function useGetData(apis) {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [initialData, setInitialData] = useState([]);
+  const [responseData, setResponseData] = useState([]);
 
   useEffect(() => {
-    console.log('Call:', apis);
+    console.log(
+      "Call:",
+      apis.map((api) => api.url)
+    );
 
     const getData = async () => {
       try {
         setLoading(true);
         const responses = await Promise.all(
-          apis.map((api) => axiosCustom().get(api))
+          apis.map((api) =>
+            axiosRequest(api.url, {
+              method: "get",
+              body: api.body,
+              query: api.query,
+              params: api.params,
+            })
+          )
         );
 
         const data = responses.map((response) => response.data);
 
-        setInitialData(data);
+        setResponseData(data);
         setLoading(false);
         setError(null);
       } catch (error) {
-        console.log('Error:' + error.message);
+        console.log("Error:" + error.message);
         setError(error.message);
         setLoading(false);
       }
@@ -34,6 +44,6 @@ export function useGetData(apis) {
   return {
     error,
     loading,
-    initialData,
+    responseData,
   };
 }

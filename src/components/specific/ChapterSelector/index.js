@@ -1,11 +1,11 @@
-import { useState } from 'react';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import InputLabel from '@mui/material/InputLabel';
-import FormControl from '@mui/material/FormControl';
-import { Link, useParams } from 'react-router-dom';
+import { useState } from "react";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import InputLabel from "@mui/material/InputLabel";
+import FormControl from "@mui/material/FormControl";
+import { Link, useParams } from "react-router-dom";
 
-import { chapterUrl } from '@/routes';
+import { chapterUrl } from "@/routes";
 
 export default function ChapterSelector({
   comicId,
@@ -20,6 +20,8 @@ export default function ChapterSelector({
     setChapter(event.target.value);
   };
 
+  console.log(listChapters);
+
   return (
     <FormControl fullWidth>
       <InputLabel id="chapter-selector-label">Chapter</InputLabel>
@@ -30,7 +32,7 @@ export default function ChapterSelector({
         label="Chapter"
         onChange={handleChange}>
         {listChapters.map((chapter, index) => (
-          <MenuItem value={chapter.index} key={index}>
+          <MenuItem value={chapter.numberOrder} key={index}>
             <Link
               to={chapterUrl(comicName, comicId, chapter.name, chapter.id)}
               className="w-full px-4 py-2">

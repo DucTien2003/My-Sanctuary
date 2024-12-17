@@ -1,92 +1,94 @@
-import clsx from 'clsx';
-import { jwtDecode } from 'jwt-decode';
-import { useState, useEffect, useRef, useMemo } from 'react';
+import clsx from "clsx";
+import { useState, useEffect, useRef, useMemo } from "react";
 
-import CommentItem from './CommentItem';
-import styles from './comment.module.scss';
-import axiosCustom from '@/api/axiosCustom';
-import DefaultButton from '@/components/common/buttons/DefaultButton';
-import PaginationComponent from '@/components/specific/PaginationComponent';
-import { isEmpty } from '@/utils';
-import { useGetData } from '@/hooks';
-import { commentApi, comicCommentsApi } from '@/api';
+import CommentItem from "./CommentItem";
+import styles from "./comment.module.scss";
+import axiosRequest from "@/api/axiosRequest";
+import DefaultButton from "@/components/common/buttons/DefaultButton";
+import PaginationComponent from "@/components/specific/PaginationComponent";
+import { useGetData } from "@/hooks";
+import { comicsIdCommentsApi, commentApi } from "@/api";
 
 const NUMBER_OF_COMMENTS_PER_PAGE = 5;
 
 function Comment({ comicId }) {
+  const isLogin = !!localStorage.getItem("accessToken");
+
   const commentInputRef = useRef(null);
 
-  const [dataRender, setDataRender] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [listComments, setListComments] = useState([]);
 
-  const comicCommentsApiUrl = comicCommentsApi(comicId);
-
   const staticApis = useMemo(
-    () => [comicCommentsApiUrl],
-    [comicCommentsApiUrl]
+    () => [
+      {
+        url: comicsIdCommentsApi(comicId),
+        query: { limit: NUMBER_OF_COMMENTS_PER_PAGE, page: currentPage },
+      },
+    ],
+    [comicId, currentPage]
   );
 
   const staticResponse = useGetData(staticApis);
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
+
+    handleGetListComments(value);
+  };
+
+  const handleGetListComments = async (page = currentPage) => {
+    const newListComments = await axiosRequest(comicsIdCommentsApi(comicId), {
+      query: { limit: NUMBER_OF_COMMENTS_PER_PAGE, page },
+    });
+
+    setListComments(newListComments.data.comments);
   };
 
   const handleComment = async () => {
     const commentContent = commentInputRef.current.value;
-    if (commentContent.trim() === '') {
+    if (commentContent.trim() === "") {
       return;
     }
 
-    const respond = await axiosCustom().post(commentApi(), {
-      comicId: comicId,
-      content: commentContent,
+    const respond = await axiosRequest(commentApi(), {
+      method: "post",
+      body: { comicId: comicId, content: commentContent },
     });
 
-    setListComments([respond.data, ...listComments]);
+    if (respond.success) {
+      await handleGetListComments();
+    }
 
-    commentInputRef.current.value = '';
+    commentInputRef.current.value = "";
   };
 
   useEffect(() => {
-    setDataRender(
-      listComments.slice(
-        (currentPage - 1) * NUMBER_OF_COMMENTS_PER_PAGE,
-        currentPage * NUMBER_OF_COMMENTS_PER_PAGE
-      )
-    );
-  }, [currentPage, listComments]);
-
-  useEffect(() => {
     if (!staticResponse.loading) {
-      setListComments(staticResponse.initialData[0]);
+      const [{ comments }] = staticResponse.responseData;
+
+      setListComments(comments);
     }
-  }, [staticResponse.loading, staticResponse.initialData]);
+  }, [staticResponse.loading, staticResponse.responseData]);
 
   if (staticResponse.loading) {
     return;
   }
 
-  const authInfo = localStorage.getItem('token')
-    ? jwtDecode(localStorage.getItem('token'))
-    : {};
-  const isLogin = !isEmpty(authInfo);
-
   return (
     <div className="max-h-full py-3">
-      {dataRender.length > 0 ? (
+      {listComments.length > 0 ? (
         <div>
-          {dataRender.map((comment, index) => {
+          {listComments.map((comment, index) => {
             return (
               <div
                 key={comment.id}
-                className={clsx(styles['item-box'], 'mb-2 px-3 pb-4')}>
+                className={clsx(styles["item-box"], "mb-2 px-3 pb-4")}>
                 <CommentItem
                   comment={comment}
                   comicId={comicId}
-                  authInfo={authInfo}
                   isLogin={isLogin}
+                  handleGetListComments={handleGetListComments}
                 />
               </div>
             );
@@ -99,7 +101,7 @@ function Comment({ comicId }) {
       )}
 
       {/* Comment pagination */}
-      {dataRender.length > 0 ? (
+      {listComments.length > 0 ? (
         <div className="my-4 flex w-full justify-center">
           <PaginationComponent
             size="large"
@@ -112,13 +114,13 @@ function Comment({ comicId }) {
 
       {/* Comment input */}
       {isLogin && (
-        <div className={clsx('px-2')}>
+        <div className={clsx("px-2")}>
           <textarea
             ref={commentInputRef}
             rows={3}
             type="text"
             placeholder="Write your comment..."
-            className={clsx('w-full rounded-lg bg-slate-100 p-4')}
+            className={clsx("w-full rounded-lg bg-slate-100 p-4")}
           />
           <div className="w-full text-end">
             <DefaultButton

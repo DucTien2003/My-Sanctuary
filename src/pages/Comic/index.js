@@ -1,43 +1,54 @@
-import clsx from 'clsx';
-import { useMemo } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import clsx from "clsx";
+import { useMemo } from "react";
+import { Link, useParams } from "react-router-dom";
 
-import Rating from './Rating';
-import { chapterUrl } from '@/routes';
-import BookMarkBtn from './BookmarkBtn';
-import styles from './comic.module.scss';
-import axiosCustom from '@/api/axiosCustom';
-import Cover from '@/components/common/Cover';
-import Swiper from '@/components/specific/Swiper';
-import Comment from '@/components/specific/Comment';
-import DefaultButton from '@/components/common/buttons/DefaultButton';
-import { useGetData } from '@/hooks';
-import { latestUpdates } from '@/api/home';
-import { breakLine, timeAgo } from '@/utils';
-import { comicInfoApi, comicChaptersApi, updateChapterViewsApi } from '@/api';
+import Rating from "./Rating";
+import { chapterUrl } from "@/routes";
+import BookMarkBtn from "./BookmarkBtn";
+import styles from "./comic.module.scss";
+import axiosRequest from "@/api/axiosRequest";
+import Cover from "@/components/common/Cover";
+import Swiper from "@/components/specific/Swiper";
+import Comment from "@/components/specific/Comment";
+import DefaultButton from "@/components/common/buttons/DefaultButton";
+import { useGetData } from "@/hooks";
+import { latestUpdates } from "@/api/home";
+import { breakLine, timeAgo } from "@/utils";
+import { comicsIdApi, comicsIdChaptersApi, chaptersIdViewsApi } from "@/api";
 import {
   FaRegStar,
   FiBookmark,
   FaRegComment,
   MdOutlineRemoveRedEye,
-} from '@/utils';
+} from "@/utils";
 
 function Comic() {
   const { comicName, comicId } = useParams();
-  const isLogin = !!localStorage.getItem('token');
+  const isLogin = !!localStorage.getItem("token");
 
   const handleUpdateChapterViews = async (chapterId) => {
-    const updateChapterViewsApiUrl = updateChapterViewsApi(chapterId);
-    await axiosCustom().put(updateChapterViewsApiUrl);
+    // const updateChapterViewsApiUrl = updateChapterViewsApi(chapterId);
+    // await axiosCustom().put(updateChapterViewsApiUrl);
+
+    await axiosRequest(chaptersIdViewsApi(chapterId), { method: "PUT" });
   };
 
-  const comicInfoApiUrl = comicInfoApi(comicId);
-  const comicChaptersApiUrl = comicChaptersApi(comicId);
+  // const comicInfoApiUrl = comicInfoApi(comicId);
+  // const comicChaptersApiUrl = comicChaptersApi(comicId);
+
+  // const staticApis = useMemo(
+  //   () => [comicInfoApiUrl, comicChaptersApiUrl],
+  //   [comicInfoApiUrl, comicChaptersApiUrl]
+  // );
 
   const staticApis = useMemo(
-    () => [comicInfoApiUrl, comicChaptersApiUrl],
-    [comicInfoApiUrl, comicChaptersApiUrl]
+    () => [
+      { url: comicsIdApi(comicId) },
+      { url: comicsIdChaptersApi(comicId) },
+    ],
+    [comicId]
   );
+
   const staticResponse = useGetData(staticApis);
 
   if (staticResponse.loading) {
@@ -52,51 +63,51 @@ function Comic() {
     );
   }
 
-  const [comicInfo, listChapters] = staticResponse.initialData;
+  const [comicInfo, listChapters] = staticResponse.responseData;
 
-  const firstChapter = listChapters[0];
-  const lastChapter = listChapters[listChapters.length - 1];
+  const firstChapter = listChapters.chapters[0];
+  const lastChapter = listChapters.chapters[listChapters.chapters.length - 1];
 
   return (
     <div className="relative mb-10">
       {/* Banner */}
       <div className="absolute left-0 top-0 -z-20 h-[300px] w-full overflow-hidden">
         <img
-          src={comicInfo.cover}
+          src={comicInfo.comic.cover}
           alt="cover"
           className={clsx(
-            styles['banner-bg'],
-            'w-full select-none object-cover'
+            styles["banner-bg"],
+            "w-full select-none object-cover"
           )}
         />
       </div>
       {/* Overlay */}
       <div
         className={clsx(
-          styles['banner-overlay'],
-          'absolute left-0 right-0 -z-10 h-[300px] w-full'
+          styles["banner-overlay"],
+          "absolute left-0 right-0 -z-10 h-[300px] w-full"
         )}></div>
 
       {/* Detail */}
       <div className="container flex flex-col pt-20">
         <div className="flex w-full">
           <div className="mr-5 w-[200px] shadow-lg">
-            <Cover comic={comicInfo} />
+            <Cover comic={comicInfo.comic} />
           </div>
 
           <div className="flex flex-1 flex-col text-white">
             <div className="inline-flex flex-1 flex-col">
               {/* Name */}
               <h1 className="min-w-fit !text-6xl font-bold">
-                {comicInfo.name}
+                {comicInfo.comic.name}
               </h1>
               {/* Sub-name */}
-              <span className="mt-3 text-xl">{comicInfo.subName}</span>
+              <span className="mt-3 text-xl">{comicInfo.comic.subName}</span>
             </div>
 
             <div className="flex flex-col">
               {/* Author - Artist */}
-              <span className="font-medium">{comicInfo.author}</span>
+              <span className="font-medium">{comicInfo.comic.author}</span>
               {/* Actions */}
               <div className="mt-5 flex items-center justify-between">
                 <div className="flex items-center">
@@ -133,12 +144,12 @@ function Comic() {
                       <div className="ml-2">
                         <Rating
                           comicId={comicId}
-                          authRating={comicInfo.authRating}
+                          authRating={comicInfo.comic.authRating}
                         />
                       </div>
                       {/* Bookmark */}
                       <div className="ml-2">
-                        <BookMarkBtn comicInfo={comicInfo} />
+                        <BookMarkBtn comicInfo={comicInfo.comic} />
                       </div>
                     </div>
                   )}
@@ -147,23 +158,28 @@ function Comic() {
                 <span
                   className={clsx(
                     {
-                      'border-green-400': comicInfo.status === 'Completed',
-                      'border-red-400': comicInfo.status === 'Dropped',
-                      'border-yellow-400': comicInfo.status === 'Ongoing',
+                      "theme-success-border":
+                        comicInfo.comic.status === "completed",
+                      "theme-error-border":
+                        comicInfo.comic.status === "dropped",
+                      "theme-warning-border":
+                        comicInfo.comic.status === "ongoing",
                     },
-                    'ml-2 flex h-12 min-w-12 items-center justify-center rounded-md border px-3 font-medium text-black'
+                    "ml-2 flex h-12 min-w-12 items-center justify-center rounded-md border px-3 font-medium text-black"
                   )}>
                   <span className="mr-3">Status: </span>
                   <span
                     className={clsx(
                       {
-                        'bg-green-400': comicInfo.status === 'Completed',
-                        'bg-red-400': comicInfo.status === 'Dropped',
-                        'bg-yellow-400': comicInfo.status === 'Ongoing',
+                        "theme-success-bg":
+                          comicInfo.comic.status === "completed",
+                        "theme-error-bg": comicInfo.comic.status === "dropped",
+                        "theme-warning-bg":
+                          comicInfo.comic.status === "ongoing",
                       },
-                      'mr-1 h-2 w-2 rounded-full'
+                      "mr-1 h-2 w-2 rounded-full"
                     )}></span>
-                  <span>{comicInfo.status}</span>
+                  <span>{comicInfo.comic.status}</span>
                 </span>
               </div>
             </div>
@@ -172,10 +188,10 @@ function Comic() {
 
         <div className="ml-[220px] mt-8">
           {/* Translator */}
-          {comicInfo.translator && (
+          {comicInfo.comic.translator && (
             <div className="flex items-center font-medium">
               <span className="mr-1">Translator:</span>
-              <span>{comicInfo.translator}</span>
+              <span>{comicInfo.comic.translator}</span>
             </div>
           )}
 
@@ -183,25 +199,31 @@ function Comic() {
           <div className="mt-2 flex items-center">
             <div className="theme-primary-text flex cursor-pointer items-center">
               <FaRegStar className="text-2xl" />
-              <span className="ml-1 mt-1 text-lg">{comicInfo.rating}</span>
+              <span className="ml-1 mt-1 text-lg">
+                {comicInfo.comic.rating}
+              </span>
             </div>
             <div className="ml-5 flex cursor-pointer items-center">
               <MdOutlineRemoveRedEye className="text-2xl" />
-              <span className="ml-1 mt-1 text-lg">{comicInfo.views}</span>
+              <span className="ml-1 mt-1 text-lg">{comicInfo.comic.views}</span>
             </div>
             <div className="ml-5 flex cursor-pointer items-center">
               <FaRegComment className="text-2xl" />
-              <span className="ml-1 mt-1 text-lg">{comicInfo.comments}</span>
+              <span className="ml-1 mt-1 text-lg">
+                {comicInfo.comic.comments}
+              </span>
             </div>
             <div className="ml-5 flex cursor-pointer items-center">
               <FiBookmark className="text-2xl" />
-              <span className="ml-1 mt-1 text-lg">{comicInfo.bookmarks}</span>
+              <span className="ml-1 mt-1 text-lg">
+                {comicInfo.comic.bookmarks}
+              </span>
             </div>
           </div>
 
           {/* Genres */}
           <div className="mt-2 flex flex-wrap">
-            {comicInfo.genres.map((genre, index) => (
+            {comicInfo.comic.genres.map((genre, index) => (
               <span
                 key={index}
                 className="theme-primary-border theme-primary-text mr-2 mt-2 cursor-pointer rounded-md border px-3 py-1">
@@ -215,7 +237,7 @@ function Comic() {
             <h4 className="theme-border-border mb-3 border-b pb-1 font-medium">
               Summary
             </h4>
-            <p className="">{breakLine(comicInfo.description)}</p>
+            <p className="">{breakLine(comicInfo.comic.description)}</p>
           </div>
         </div>
 
@@ -225,7 +247,7 @@ function Comic() {
             {/* Chapter */}
             <h3 className="px-4 py-2 text-2xl font-semibold">Chapters</h3>
             <div className="theme-border-border max-h-[500px] overflow-y-auto border">
-              {listChapters.map((chapter, index) => {
+              {listChapters.chapters.map((chapter, index) => {
                 return (
                   <Link
                     key={index}
@@ -254,7 +276,7 @@ function Comic() {
                         </span>
                       </div>
                       <span className="mt-1 w-full text-end text-sm">
-                        {timeAgo(chapter.createAt)}
+                        {timeAgo(chapter.createdAt)}
                       </span>
                     </div>
                   </Link>
@@ -267,12 +289,12 @@ function Comic() {
           <div className="ml-5 max-h-full flex-1">
             <h3
               className={clsx(
-                styles['header-box'],
-                'px-4 py-2 text-2xl font-semibold'
+                styles["header-box"],
+                "px-4 py-2 text-2xl font-semibold"
               )}>
               Comments
             </h3>
-            <Comment comicId={comicInfo.id} />
+            <Comment comicId={comicInfo.comic.id} />
           </div>
         </div>
       </div>

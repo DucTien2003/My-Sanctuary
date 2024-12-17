@@ -1,10 +1,10 @@
-import clsx from 'clsx';
-import { Link } from 'react-router-dom';
-import { useState, Fragment } from 'react';
+import clsx from "clsx";
+import { Link } from "react-router-dom";
+import { Fragment } from "react";
 
-import { uploadUrl, loginUrl, registerUrl } from '@/routes';
-import { isEmpty } from '@/utils';
-import { useDropdown } from '@/hooks';
+import { useDropdown } from "@/hooks";
+import { uploadUrl, loginUrl, registerUrl } from "@/routes";
+import { useAuthStore, authActions } from "@/store";
 import {
   FiUser,
   FiLogIn,
@@ -15,23 +15,26 @@ import {
   FiUserPlus,
   FiBookmark,
   CiSettings,
-} from '@/utils';
+} from "@/utils";
 
-function UserMenu({ userInfo }) {
+function UserMenu() {
+  const [authState, authDispatch] = useAuthStore();
+
   const userMenuList = [
-    { title: 'My profile', icon: FiUser, to: '/' },
-    { title: 'My Bookmarks', icon: FiBookmark, to: '/' },
-    { title: 'My History', icon: LuHistory, to: '/' },
-    { title: 'Upload Comic', icon: FiUpload, to: uploadUrl() },
-    { title: 'My Settings', icon: CiSettings, to: '/' },
-    { title: 'Announcements', icon: FaRegBell, to: '/' },
+    { title: "My profile", icon: FiUser, to: "/" },
+    { title: "My Bookmarks", icon: FiBookmark, to: "/" },
+    { title: "My History", icon: LuHistory, to: "/" },
+    { title: "Upload Comic", icon: FiUpload, to: uploadUrl() },
+    { title: "My Settings", icon: CiSettings, to: "/" },
+    { title: "Announcements", icon: FaRegBell, to: "/" },
   ];
 
-  const [isLogin, setIsLogin] = useState(!isEmpty(userInfo));
+  const isLogin = localStorage.getItem("accessToken");
+  const authInfo = isLogin ? authState : {};
 
   const handleLogOut = () => {
-    localStorage.removeItem('token');
-    setIsLogin(false);
+    localStorage.removeItem("accessToken");
+    authDispatch(authActions.logout());
   };
 
   const { isShowDropdown, dropdownRef, setIsShowDropdown } = useDropdown();
@@ -44,19 +47,19 @@ function UserMenu({ userInfo }) {
       <span>
         <img
           src={
-            isLogin && userInfo.avatar
-              ? userInfo.avatar
-              : require('@/assets/images/user-avatar-1.png')
+            isLogin && authInfo.avatar
+              ? authInfo.avatar
+              : require("@/assets/images/user-avatar-1.png")
           }
           alt="user avatar"
-          className="theme-white-10-bg flex h-10 w-10 cursor-pointer items-center justify-center rounded-full"
+          className="theme-white-10-bg flex h-10 w-10 cursor-pointer items-center justify-center rounded-full object-cover"
         />
       </span>
 
       <div
         className={clsx(
           { flex: isShowDropdown, hidden: !isShowDropdown },
-          'theme-white-10-bg absolute right-0 top-full min-w-64 flex-col rounded p-2 shadow-lg'
+          "theme-white-10-bg absolute right-0 top-full min-w-64 flex-col rounded p-2 shadow-lg"
         )}>
         {/* avatar */}
         <Link
@@ -65,15 +68,15 @@ function UserMenu({ userInfo }) {
           <div className="text-center">
             <img
               src={
-                isLogin && userInfo.avatar
-                  ? userInfo.avatar
-                  : require('@/assets/images/user-avatar-1.png')
+                isLogin && authInfo.avatar
+                  ? authInfo.avatar
+                  : require("@/assets/images/user-avatar-1.png")
               }
               alt="avatar"
-              className="mx-auto w-32 rounded-full"
+              className="mx-auto h-32 w-32 rounded-full object-cover"
             />
             <h3 className="mt-2 font-semibold">
-              {isLogin && userInfo.name ? userInfo.name : 'Guest'}
+              {isLogin && authInfo.name ? authInfo.name : "Guest"}
             </h3>
           </div>
         </Link>

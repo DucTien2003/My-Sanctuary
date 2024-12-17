@@ -1,14 +1,19 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { useForm, FormProvider } from 'react-hook-form';
+import { Link, useNavigate } from "react-router-dom";
+import { useForm, FormProvider } from "react-hook-form";
 
-import axiosCustom from '@/api/axiosCustom';
-import AppInput from '@/components/common/AppInput';
-import DefaultButton from '@/components/common/buttons/DefaultButton';
+import axiosRequest from "@/api/axiosRequest";
+import AppInput from "@/components/common/AppInput";
+import DefaultButton from "@/components/common/buttons/DefaultButton";
 
-import { loginUrl } from '@/routes';
-import { registerApi } from '@/api';
-import { useAlertStore, alertActions } from '@/store';
-import { required, minLength, requiredEmail } from '@/utils';
+import { loginUrl } from "@/routes";
+import { registerApi } from "@/api";
+import { useAlertStore, alertActions } from "@/store";
+import {
+  required,
+  minLength,
+  requiredEmail,
+  onlyDigitsAndLetters,
+} from "@/utils";
 
 function Register() {
   // Provider
@@ -20,34 +25,69 @@ function Register() {
   const { setError } = methods;
 
   const onSubmit = async (data) => {
-    await axiosCustom()
-      .post(registerApi(), {
+    const response = await axiosRequest(registerApi(), {
+      method: "post",
+      body: {
         username: data.username,
         password: data.password,
         email: data.email,
-      })
-      .then((res) => {
-        if (res.status === 200) {
-          navigate('/login');
+      },
+    });
 
-          alertDispatch(
-            alertActions.showAlert('Register successfully!', 'success')
-          );
-        }
-      })
-      .catch((error) => {
-        if (error.response.data.conflict === 'username') {
-          setError('username', {
-            type: 'manual',
-            message: error.response.data.message,
+    if (response.code === 200 && response.success) {
+      navigate("/login");
+
+      alertDispatch(alertActions.showAlert(response.message, "success"));
+    } else {
+      if (response.code === 500) {
+        alertDispatch(alertActions.showAlert(response.message, "error"));
+        return;
+      }
+
+      const errorData = response.data;
+      if (errorData.errors.length > 0) {
+        errorData.errors.forEach((err) => {
+          setError(err.field, {
+            type: "manual",
+            message: err.message,
           });
-        } else if (error.response.data.conflict === 'email') {
-          setError('email', {
-            type: 'manual',
-            message: error.response.data.message,
-          });
-        }
-      });
+        });
+      }
+    }
+
+    // await axiosCustom()
+    //   .post(registerApi(), {
+    //     username: data.username,
+    //     password: data.password,
+    //     email: data.email,
+    //   })
+    //   .then((response) => {
+    //     if (response.status === 200) {
+    //       navigate("/login");
+
+    //       alertDispatch(
+    //         alertActions.showAlert(response.data.message, "success")
+    //       );
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     if (error.response.status === 500) {
+    //       alertDispatch(
+    //         alertActions.showAlert(error.response.data.message, "error")
+    //       );
+    //       return;
+    //     }
+
+    //     const errorData = error.response.data.data;
+    //     if (errorData.errors.length > 0) {
+    //       errorData.errors.forEach((err) => {
+    //         setError(err.field, {
+    //           type: "manual",
+    //           message: err.message,
+    //         });
+    //       });
+    //     }
+    //   });
   };
 
   return (
@@ -63,7 +103,7 @@ function Register() {
               placeholder="Enter username"
               id="username"
               name="Username"
-              validator={[required, minLength(6)]}
+              validator={[required, minLength(6), onlyDigitsAndLetters]}
             />
           </div>
 

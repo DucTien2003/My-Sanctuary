@@ -1,32 +1,37 @@
-import { useMemo } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useMemo } from "react";
+import { Link, useParams } from "react-router-dom";
 
-import ChapterSelector from '@/components/specific/ChapterSelector';
-import { chapterUrl, comicUrl } from '@/routes';
-import { formatPath } from '@/utils';
-import { useGetData } from '@/hooks';
+import ChapterSelector from "@/components/specific/ChapterSelector";
+import { chapterUrl, comicUrl } from "@/routes";
+import { formatPath } from "@/utils";
+import { useGetData } from "@/hooks";
 import {
-  comicInfoApi,
-  chapterInfoApi,
-  comicChaptersApi,
-  chapterImagesApi,
-} from '@/api';
+  comicsIdApi,
+  chaptersIdApi,
+  comicsIdChaptersApi,
+  chaptersIdImagesApi,
+} from "@/api";
 
 function Chapter() {
   const { comicId, chapterId, comicName } = useParams();
 
-  const comicInfoApiUrl = comicInfoApi(comicId);
-  const chapterInfoApiUrl = chapterInfoApi(chapterId);
-  const comicChaptersApiUrl = comicChaptersApi(comicId);
-  const chapterImagesApiUrl = chapterImagesApi(chapterId);
-
   const staticApis = useMemo(
-    () => [comicInfoApiUrl, comicChaptersApiUrl],
-    [comicInfoApiUrl, comicChaptersApiUrl]
+    () => [
+      { url: comicsIdApi(comicId) },
+      {
+        url: comicsIdChaptersApi(comicId),
+        query: { orderby: "number_order", sortType: "DESC" },
+      },
+    ],
+    [comicId]
   );
+
   const dynamicApis = useMemo(
-    () => [chapterInfoApiUrl, chapterImagesApiUrl],
-    [chapterImagesApiUrl, chapterInfoApiUrl]
+    () => [
+      { url: chaptersIdApi(chapterId) },
+      { url: chaptersIdImagesApi(chapterId) },
+    ],
+    [chapterId]
   );
 
   const staticResponse = useGetData(staticApis);
@@ -43,28 +48,34 @@ function Chapter() {
     );
   }
 
-  const [comicInfo, listChapters] = staticResponse.initialData;
-  const [chapterInfo, listImages] = dynamicResponse.initialData;
+  const [{ comic: comicInfo }, { chapters: listChapters }] =
+    staticResponse.responseData;
+  const [{ chapter: chapterInfo }, { images: listImages }] =
+    dynamicResponse.responseData;
 
-  const isFirstChapter = chapterInfo.id === listChapters[0].id;
-  const isLastChapter =
+  const chapterIndex = listChapters.findIndex(
+    (chapter) => chapter.id === chapterInfo.id
+  );
+
+  const isLastChapter = chapterInfo.id === listChapters[0].id;
+  const isFirstChapter =
     chapterInfo.id === listChapters[listChapters.length - 1].id;
 
   const prevChapterUrl = isFirstChapter
-    ? '/'
+    ? "/"
     : chapterUrl(
         comicName,
         comicId,
-        listChapters[chapterInfo.index - 2].name,
-        Number(chapterId) - 1
+        listChapters[chapterIndex + 1].name,
+        listChapters[chapterIndex + 1].id
       );
   const nextChapterUrl = isLastChapter
-    ? '/'
+    ? "/"
     : chapterUrl(
         comicName,
         comicId,
-        listChapters[chapterInfo.index].name,
-        Number(chapterId) + 1
+        listChapters[chapterIndex - 1].name,
+        listChapters[chapterIndex - 1].id
       );
 
   return (
@@ -99,7 +110,7 @@ function Chapter() {
             <ChapterSelector
               listChapters={listChapters}
               comicId={comicId}
-              initialChapter={chapterInfo.index}
+              initialChapter={chapterInfo.numberOrder}
             />
           </div>
           {isLastChapter ? (

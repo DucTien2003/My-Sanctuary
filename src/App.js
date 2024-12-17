@@ -1,16 +1,18 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-import ScrollToTop from '@/components/specific/ScrollToTop';
-import AlertMessage from '@/components/common/AlertMessage';
-import { publicRoutes } from '@/routes';
-import { StoreProvider } from '@/store';
-import { DefaultLayout } from '@/layouts';
+import ScrollToTop from "@/components/specific/ScrollToTop";
+import GetAuthData from "@/components/specific/GetAuthData";
+import AlertMessage from "@/components/common/AlertMessage";
+import { publicRoutes } from "@/routes";
+import { StoreProvider } from "@/store";
+import { DefaultLayout } from "@/layouts";
 
 function App() {
   return (
     <StoreProvider>
       <Router>
         <ScrollToTop />
+        <GetAuthData />
 
         <div className="App">
           <Routes>

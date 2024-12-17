@@ -1,8 +1,8 @@
-import { Fragment, useState, useRef } from 'react';
+import { Fragment, useState, useRef } from "react";
 
-import axiosCustom from '@/api/axiosCustom';
-import { chapterInfoApi } from '@/api';
-import ModalComponent from '@/components/common/ModalComponent';
+import axiosRequest from "@/api/axiosRequest";
+import { chaptersIdApi } from "@/api";
+import ModalComponent from "@/components/common/ModalComponent";
 import {
   reverseArray,
   timeStandard,
@@ -10,7 +10,7 @@ import {
   RiImageEditFill,
   FaLongArrowAltUp,
   FaLongArrowAltDown,
-} from '@/utils';
+} from "@/utils";
 
 function ListChapter({ listChapters, handleGetImagesChapter, comicInfo = {} }) {
   const deleteModalRef = useRef();
@@ -29,19 +29,26 @@ function ListChapter({ listChapters, handleGetImagesChapter, comicInfo = {} }) {
     deleteModalRef.current.openModal();
   };
 
-  const handleDelete = async (chapterId) => {
-    const chapterInfoApiUrl = chapterInfoApi(chapterId);
-    const response = await axiosCustom().delete(chapterInfoApiUrl, {
-      params: {
+  const handleDelete = async (chapter) => {
+    // const chapterInfoApiUrl = chapterInfoApi(chapterId);
+    // const response = await axiosCustom().delete(chapterInfoApiUrl, {
+    //   params: {
+    //     comicNameMinio: comicInfo.nameMinio,
+    //   },
+    // });
+    const response = await axiosRequest(chaptersIdApi(chapter.id), {
+      method: "DELETE",
+      query: {
         comicNameMinio: comicInfo.nameMinio,
+        chapterNameMinio: chapter.nameMinio,
       },
     });
+
+    console.log(response);
+
     if (response.data.success) {
-      const newChapters = chapters.filter(
-        (chapter) => chapter.id !== chapterId
-      );
-      setChapters(newChapters);
-      console.log('Delete chapter success');
+      // setChapters(newChapters);
+      console.log("Delete chapter success");
     }
   };
 
@@ -53,7 +60,7 @@ function ListChapter({ listChapters, handleGetImagesChapter, comicInfo = {} }) {
             <h5
               className="inline-flex w-[100px] cursor-pointer items-center bg-gray-50 font-medium"
               onClick={handleChangeOrder}>
-              <span>Index</span>
+              <span>NO</span>
               <span>
                 {isAscending ? (
                   <FaLongArrowAltUp className="text-xs" />
@@ -65,7 +72,7 @@ function ListChapter({ listChapters, handleGetImagesChapter, comicInfo = {} }) {
             <h5 className="w-1/2">Name chapter</h5>
             <h5 className="flex-1">Publish at</h5>
           </div>
-          <h5 className="w-[12%]">action</h5>
+          <h5 className="w-[12%]">Action</h5>
         </div>
 
         <div>
@@ -76,9 +83,9 @@ function ListChapter({ listChapters, handleGetImagesChapter, comicInfo = {} }) {
               <div
                 className="flex flex-1 items-center"
                 onClick={() => handleGetImagesChapter(chapter)}>
-                <p className="w-[100px]">{chapter.index}</p>
+                <p className="w-[100px]">{chapter.numberOrder}</p>
                 <p className="limit-line-1 w-1/2 break-all">{chapter.name}</p>
-                <p className="flex-1">{timeStandard(chapter.createAt)}</p>
+                <p className="flex-1">{timeStandard(chapter.createdAt)}</p>
               </div>
               <div className="flex w-[12%] items-center">
                 <span
@@ -102,11 +109,11 @@ function ListChapter({ listChapters, handleGetImagesChapter, comicInfo = {} }) {
       <ModalComponent
         title="Delete chapter"
         submitTitle="Confirm"
-        handleSubmit={() => handleDelete(selectedDeleteChapter.id)}
+        handleSubmit={() => handleDelete(selectedDeleteChapter)}
         ref={deleteModalRef}>
         {selectedDeleteChapter && selectedDeleteChapter.name && (
           <p>
-            Are you sure you want to delete{' '}
+            Are you sure you want to delete{" "}
             <span className="font-semibold">{selectedDeleteChapter.name}</span>?
           </p>
         )}

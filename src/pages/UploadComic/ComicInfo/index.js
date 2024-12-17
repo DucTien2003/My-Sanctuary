@@ -1,40 +1,47 @@
-import { useRef, useEffect, useState, Fragment } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRef, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-import axiosCustom from '@/api/axiosCustom';
-import UploadBox from '@/components/specific/UploadBox';
-import SelectInput from '@/components/common/SelectInput';
-import TextFieldInput from '@/components/common/TextFieldInput';
-import ModalComponent from '@/components/common/ModalComponent';
-import GenresSelector from '@/components/specific/GenresSelector';
-import DefaultButton from '@/components/common/buttons/DefaultButton';
-import { createComicApi, comicInfoApi } from '@/api';
-import { useAlertStore, alertActions } from '@/store';
-import { requiredAcceptSpace, convertImageToFile } from '@/utils';
+import axiosRequest from "@/api/axiosRequest";
+import UploadBox from "@/components/specific/UploadBox";
+import SelectInput from "@/components/common/SelectInput";
+import ModalComponent from "@/components/common/ModalComponent";
+import GenresSelector from "@/components/specific/GenresSelector";
+import DefaultButton from "@/components/common/buttons/DefaultButton";
+import AppTextFieldInput from "@/components/common/AppTextFieldInput";
+import { comicsApi, comicsIdApi } from "@/api";
+import { useAlertStore, alertActions } from "@/store";
+import { useForm, FormProvider } from "react-hook-form";
+import {
+  requiredAcceptSpace,
+  convertImageToFile,
+  capitalizeFirstLetter,
+} from "@/utils";
 
 const statusList = [
-  { value: 'Ongoing', title: 'Ongoing' },
-  { value: 'Dropped', title: 'Dropped' },
-  { value: 'Completed', title: 'Completed' },
+  { value: "ongoing", title: "Ongoing" },
+  { value: "dropped", title: "Dropped" },
+  { value: "completed", title: "Completed" },
 ];
 
 function ComicInfo({ comicId, comicInfo = {} }) {
   const navigate = useNavigate();
   const [, alertDispatch] = useAlertStore();
 
+  // Refs
   const resetModalRef = useRef();
   const updateModalRef = useRef();
 
-  const nameRef = useRef();
   const coverRef = useRef();
-  const authorRef = useRef();
-  const subNameRef = useRef();
-  const translatorRef = useRef();
-  const descriptionRef = useRef();
   const statusSelectorRef = useRef();
   const genresSelectorRef = useRef();
 
+  // For form
+  const [formControllerData, setFormControllerData] = useState(comicInfo);
+  const methods = useForm();
+  const { setError } = methods;
+
   const [initialFiles, setCoverFile] = useState([]);
+
   useEffect(() => {
     const fetchCoverFile = async () => {
       if (comicInfo.cover) {
@@ -47,75 +54,77 @@ function ComicInfo({ comicId, comicInfo = {} }) {
   }, [comicInfo]);
 
   const handleReset = () => {
-    nameRef.current.resetValue();
+    methods.reset();
     coverRef.current.resetFiles();
-    authorRef.current.resetValue();
-    subNameRef.current.resetValue();
-    translatorRef.current.resetValue();
-    descriptionRef.current.resetValue();
     statusSelectorRef.current.resetValue();
     genresSelectorRef.current.resetValue();
   };
 
-  const handleUpdate = async () => {
-    const isErrorName = nameRef.current.checkError();
+  const onSubmit = (data) => {
+    // Check if cover is empty
     const isEmptyCover = coverRef.current.checkEmpty();
-    const isErrorAuthor = authorRef.current.checkError();
 
-    if (isErrorName || isEmptyCover || isErrorAuthor) {
+    if (isEmptyCover) {
       return null;
     }
 
-    const name = nameRef.current.getValue();
+    // Open modal
+    setFormControllerData(data);
+    updateModalRef.current.openModal();
+  };
+
+  const handleConfirm = async () => {
     const cover = coverRef.current.getFiles();
-    const author = authorRef.current.getValue();
-    const subName = subNameRef.current.getValue();
     const status = statusSelectorRef.current.getValue();
     const genres = genresSelectorRef.current.getValue();
-    const translator = translatorRef.current.getValue();
-    const description = descriptionRef.current.getValue();
+
+    const newComicInfo = {
+      ...formControllerData,
+      status,
+      genres,
+    };
 
     const formData = new FormData();
-    formData.append('name', name);
-    formData.append('author', author);
-    formData.append('status', status);
-    formData.append('cover', cover[0]);
-    formData.append('subName', subName);
-    formData.append('translator', translator);
-    formData.append('description', description);
-    formData.append('genres', JSON.stringify(genres));
-    formData.append('oldComicInfo', JSON.stringify(comicInfo));
+    formData.append("cover", cover[0]);
+    formData.append("comicInfo", JSON.stringify(newComicInfo));
+    formData.append("oldComicInfo", JSON.stringify(comicInfo));
 
-    const createComicApiUrl = createComicApi();
-    const updateComicApiUrl = comicInfoApi(comicId);
     const response = comicId
-      ? await axiosCustom().put(updateComicApiUrl, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
+      ? await axiosRequest(comicsIdApi(comicId), {
+          method: "PUT",
+          body: formData,
+          headers: { "Content-Type": "multipart/form-data" },
         })
-      : await axiosCustom().post(createComicApiUrl, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
+      : await axiosRequest(comicsApi(), {
+          method: "POST",
+          body: formData,
+          headers: { "Content-Type": "multipart/form-data" },
         });
 
-    if (response.status === 200) {
+    if (response.success && response.code === 200) {
       alertDispatch(
-        alertActions.showAlert('Update comic info successfully!', 'success')
+        alertActions.showAlert(
+          comicId
+            ? "Update comic info successfully!"
+            : "Create comic info successfully!",
+          "success"
+        )
       );
-      navigate(-1);
     } else {
       alertDispatch(
-        alertActions.showAlert('Update comic info failed!', 'error')
+        alertActions.showAlert(
+          comicId ? "Update comic info failed!" : "Create comic info failed!",
+          "error"
+        )
       );
-      navigate(-1);
     }
+
+    navigate(-1);
   };
 
   return (
-    <Fragment>
-      <div className="">
+    <FormProvider {...methods}>
+      <form onSubmit={methods.handleSubmit(onSubmit)}>
         <div className="mb-6 flex items-center justify-end">
           <DefaultButton
             className="!mr-3 h-12 !rounded-md border !px-10 text-lg font-medium"
@@ -125,9 +134,9 @@ function ComicInfo({ comicId, comicInfo = {} }) {
           </DefaultButton>
 
           <DefaultButton
-            className="h-12 !rounded-md !px-10 text-lg font-medium"
-            onClick={() => updateModalRef.current.openModal()}>
-            {comicId ? 'Update' : 'Create'}
+            type="submit"
+            className="h-12 !rounded-md !px-10 text-lg font-medium">
+            {comicId ? "Update" : "Create"}
           </DefaultButton>
         </div>
 
@@ -145,15 +154,14 @@ function ComicInfo({ comicId, comicInfo = {} }) {
             </div>
 
             <div className="mt-3 w-full">
-              <TextFieldInput
+              <AppTextFieldInput
                 id="name"
                 name="Name"
                 label="Name"
                 required={true}
                 variant="standard"
-                initialData={comicInfo.name || ''}
+                defaultValue={comicInfo.name || ""}
                 validate={[requiredAcceptSpace]}
-                ref={nameRef}
               />
             </div>
           </div>
@@ -164,37 +172,34 @@ function ComicInfo({ comicId, comicInfo = {} }) {
               <div className="flex flex-col gap-7">
                 {/* Author */}
                 <div>
-                  <TextFieldInput
+                  <AppTextFieldInput
                     id="author"
                     name="Author"
                     label="Author"
                     size="small"
                     required={true}
-                    initialData={comicInfo.author || ''}
+                    defaultValue={comicInfo.author || ""}
                     validate={[requiredAcceptSpace]}
-                    ref={authorRef}
                   />
                 </div>
                 {/* Translator */}
                 <div>
-                  <TextFieldInput
+                  <AppTextFieldInput
                     id="translator"
                     name="Translator"
                     label="Translator"
                     size="small"
-                    initialData={comicInfo.translator || ''}
-                    ref={translatorRef}
+                    defaultValue={comicInfo.translator || ""}
                   />
                 </div>
                 {/* Sub name */}
                 <div>
-                  <TextFieldInput
-                    id="sub-name"
+                  <AppTextFieldInput
+                    id="subname"
                     name="Sub-name"
                     label="Sub Name"
                     size="small"
-                    initialData={comicInfo.subName || ''}
-                    ref={subNameRef}
+                    defaultValue={comicInfo.subname || ""}
                   />
                 </div>
                 {/* Status */}
@@ -205,7 +210,10 @@ function ComicInfo({ comicId, comicInfo = {} }) {
                     list={statusList}
                     initialValue={
                       comicInfo.status
-                        ? { value: comicInfo.status, title: comicInfo.status }
+                        ? {
+                            value: comicInfo.status,
+                            title: capitalizeFirstLetter(comicInfo.status),
+                          }
                         : statusList[0]
                     }
                     size="small"
@@ -218,15 +226,14 @@ function ComicInfo({ comicId, comicInfo = {} }) {
             <div className="flex flex-1 flex-col pl-2">
               {/* Description */}
               <div>
-                <TextFieldInput
+                <AppTextFieldInput
                   id="description"
                   name="Description"
                   label="Description"
-                  initialData={comicInfo.description || ''}
+                  defaultValue={comicInfo.description || ""}
                   size="small"
                   multiline={true}
                   rows={7}
-                  ref={descriptionRef}
                 />
               </div>
               {/* Genres */}
@@ -245,7 +252,7 @@ function ComicInfo({ comicId, comicInfo = {} }) {
             </div>
           </div>
         </div>
-      </div>
+      </form>
       <ModalComponent
         title="Reset comic info"
         submitTitle="Reset"
@@ -255,20 +262,20 @@ function ComicInfo({ comicId, comicInfo = {} }) {
         <p className="mt-1">Your changes will be lost.</p>
       </ModalComponent>
       <ModalComponent
-        title={comicId ? 'Update comic info' : 'Create comic info'}
+        title={comicId ? "Update comic info" : "Create comic info"}
         submitTitle="Confirm"
-        handleSubmit={handleUpdate}
+        handleSubmit={handleConfirm}
         ref={updateModalRef}>
         <p>
           {comicId
-            ? 'Are you sure you want to update the comic info?'
-            : 'Are you sure you want to create the comic?'}
+            ? "Are you sure you want to update the comic info?"
+            : "Are you sure you want to create the comic?"}
         </p>
         <p className="mt-1">
-          {comicId ? 'Your changes will be saved.' : 'The info will be saved'}
+          {comicId ? "Your changes will be saved." : "The info will be saved"}
         </p>
       </ModalComponent>
-    </Fragment>
+    </FormProvider>
   );
 }
 
